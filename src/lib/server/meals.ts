@@ -51,6 +51,25 @@ export async function listMeals(userId: string): Promise<Meal[]> {
 		.orderBy(desc(meals.createdAt));
 }
 
+export async function getMeal(userId: string, id: string): Promise<Meal | null> {
+	if (!z.uuid().safeParse(id).success) {
+		return null;
+	}
+
+	const [row] = await db
+		.select({
+			id: meals.id,
+			title: meals.title,
+			content: meals.content,
+			createdAt: meals.createdAt
+		})
+		.from(meals)
+		.where(and(eq(meals.userId, userId), eq(meals.id, id)))
+		.limit(1);
+
+	return row ?? null;
+}
+
 export async function deleteMeal(userId: string, id: string): Promise<{ ok: boolean }> {
 	if (!z.uuid().safeParse(id).success) {
 		return { ok: false };

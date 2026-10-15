@@ -120,7 +120,7 @@ The seed in `scripts/seed.ts` exports `seedDishes` (six dishes) and replaces dis
 
 ```bash
 bun run lint
-bun run check
+bun run typecheck
 bun run test
 ```
 

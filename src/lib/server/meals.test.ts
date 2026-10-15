@@ -6,7 +6,8 @@ const dbMock = vi.hoisted(() => {
 	const insert = vi.fn(() => ({ values: insertValues }));
 
 	const orderBy = vi.fn();
-	const where = vi.fn(() => ({ orderBy }));
+	const limit = vi.fn();
+	const where = vi.fn(() => ({ orderBy, limit }));
 	const from = vi.fn(() => ({ where }));
 	const select = vi.fn(() => ({ from }));
 
@@ -23,6 +24,7 @@ const dbMock = vi.hoisted(() => {
 		from,
 		where,
 		orderBy,
+		limit,
 		del,
 		deleteWhere,
 		deleteReturning
@@ -31,7 +33,7 @@ const dbMock = vi.hoisted(() => {
 
 vi.mock('./db', () => ({ db: dbMock.db }));
 
-import { saveMeal, listMeals, deleteMeal } from './meals';
+import { saveMeal, listMeals, deleteMeal, getMeal } from './meals';
 
 const userId = '11111111-1111-4111-8111-111111111111';
 const dishId = '33333333-3333-4333-8333-333333333333';
@@ -61,6 +63,7 @@ beforeEach(() => {
 	dbMock.insertReturning.mockResolvedValue([]);
 	dbMock.deleteReturning.mockResolvedValue([]);
 	dbMock.orderBy.mockResolvedValue([]);
+	dbMock.limit.mockResolvedValue([]);
 });
 
 describe('saveMeal', () => {
@@ -192,5 +195,41 @@ describe('listMeals', () => {
 			content: expect.anything(),
 			createdAt: expect.anything()
 		});
+	});
+});
+
+describe('getMeal', () => {
+	it('returns the owner\u2019s meal when it exists', async () => {
+		const row = { id: mealId, title: 'Paneer', content: 'Curry.', createdAt: new Date('2026-01-02') };
+		dbMock.limit.mockResolvedValueOnce([row]);
+
+		const result = await getMeal(userId, mealId);
+
+		expect(result).toEqual(row);
+		expect(dbMock.select).toHaveBeenCalledTimes(1);
+		expect(dbMock.limit).toHaveBeenCalledTimes(1);
+	});
+
+	it('returns null when no meal matches', async () => {
+		dbMock.limit.mockResolvedValueOnce([]);
+
+		const result = await getMeal(userId, mealId);
+
+		expect(result).toBeNull();
+	});
+
+	it('scopes the lookup to the owner', async () => {
+		await getMeal(userId, mealId);
+
+		const params = sqlParams((dbMock.where.mock.calls[0] as unknown[])[0]);
+		expect(params).toContain(userId);
+		expect(params).toContain(mealId);
+	});
+
+	it('rejects a non-uuid id without touching the database', async () => {
+		const result = await getMeal(userId, 'not-a-uuid');
+
+		expect(result).toBeNull();
+		expect(dbMock.select).not.toHaveBeenCalled();
 	});
 });

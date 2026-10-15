@@ -9,7 +9,7 @@
 		"build": "vite build",
 		"preview": "ORIGIN=http://localhost:3000 node --env-file=.env build/index.js",
 		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"lint": "eslint .",
 		"test": "vitest run",
 		"db:generate": "drizzle-kit generate",

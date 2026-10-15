@@ -8,7 +8,7 @@ DearDish is an AI-powered foodtech demo: it helps people facing health challenge
 - `bun run dev` - dev server (bun auto-loads `.env`)
 - `bun run build` - production build (`@sveltejs/adapter-node`, output in `build/`)
 - `bun run preview` - run the built server on `:3000`; sets `ORIGIN=http://localhost:3000` and loads env via `node --env-file=.env` (adapter-node 403s local form POSTs without a matching `ORIGIN`)
-- `bun run check` - `svelte-kit sync` + `svelte-check`
+- `bun run typecheck` - `svelte-kit sync` + `svelte-check`
 - `bun run lint` - `eslint .`
 - `bun run test` - `vitest run` (unit tests only, no real env or db needed)
 - `bun run db:push` - `drizzle-kit push` (create/sync tables on Neon)

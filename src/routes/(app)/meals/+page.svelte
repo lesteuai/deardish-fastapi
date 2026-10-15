@@ -56,11 +56,13 @@
 	{:else}
 		{#each data.meals as meal (meal.id)}
 			<article class="card">
-				<div class="meal-head">
-					<h2>{meal.title}</h2>
-					<span class="date-pill">Saved {formatDate(meal.createdAt)}</span>
-				</div>
-				<p>{preview(meal.content)}</p>
+				<a class="meal-body" href={`/meals/${meal.id}`}>
+					<div class="meal-head">
+						<h2>{meal.title}</h2>
+						<span class="date-pill">Saved {formatDate(meal.createdAt)}</span>
+					</div>
+					<p>{preview(meal.content)}</p>
+				</a>
 				<Button
 					type="button"
 					disabled={deletingId === meal.id}
@@ -74,6 +76,20 @@
 </section>
 
 <style>
+	.meal-body {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.meal-body:hover h2 {
+		color: var(--berry-dark);
+	}
+
+	.meal-body p {
+		margin-bottom: 1rem;
+	}
+
 	.meal-head {
 		display: flex;
 		align-items: center;
