@@ -1,15 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { load } from './+layout.server';
 
-type LoadEvent = {
-	parent: () => Promise<{ user: { id: string; email: string } | null }>;
-	locals: { user?: unknown };
-};
+type AuthUser = { id: string; email: string };
+type LoadEvent = { locals: { user: AuthUser | null } };
 
-const runLoad = (user: { id: string; email: string } | null, locals: LoadEvent['locals'] = {}) =>
-	(load as unknown as (event: LoadEvent) => Promise<{ user: unknown }>)({
-		parent: async () => ({ user }),
-		locals
+const runLoad = (user: AuthUser | null) =>
+	(load as unknown as (event: LoadEvent) => Promise<{ user: AuthUser | null }>)({
+		locals: { user }
 	});
 
 describe('(app) layout protection', () => {
@@ -27,11 +24,9 @@ describe('(app) layout protection', () => {
 
 	it('exposes the signed-in user to the layout', async () => {
 		const user = { id: 'user-1', email: 'chef@example.com' };
-		const locals: LoadEvent['locals'] = {};
 
-		const result = await runLoad(user, locals);
+		const result = await runLoad(user);
 
 		expect(result).toEqual({ user });
-		expect(locals.user).toEqual(user);
 	});
 });

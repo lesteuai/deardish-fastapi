@@ -96,6 +96,14 @@ describe('registerUser', () => {
 		expect(result).toEqual({ conflict: true });
 	});
 
+	it('returns a conflict result when drizzle wraps the pg error in cause', async () => {
+		dbMock.insertReturning.mockRejectedValueOnce({ code: undefined, cause: { code: '23505' } });
+
+		const result = await registerUser('chef@example.com', 'supersecret');
+
+		expect(result).toEqual({ conflict: true });
+	});
+
 	it('rethrows non-unique database errors', async () => {
 		dbMock.insertReturning.mockRejectedValueOnce(new Error('connection reset'));
 

@@ -91,10 +91,7 @@ export function clearSessionCookie(cookies: Cookies): void {
 }
 
 function isUniqueViolation(error: unknown): boolean {
-	return (
-		typeof error === 'object' &&
-		error !== null &&
-		'code' in error &&
-		(error as { code?: unknown }).code === '23505'
-	);
+	if (typeof error !== 'object' || error === null) return false;
+	const { code, cause } = error as { code?: unknown; cause?: { code?: unknown } };
+	return code === '23505' || cause?.code === '23505';
 }
