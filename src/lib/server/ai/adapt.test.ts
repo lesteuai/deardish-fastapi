@@ -7,6 +7,10 @@ vi.mock('ai', async (importOriginal) => {
 	return { ...actual, streamText: streamTextMock };
 });
 
+// `$env/dynamic/private` is snapshotted from `.env` when Vite configures, so
+// `vi.stubEnv` cannot reach it. Back it with `process.env` so stubs apply.
+vi.mock('$env/dynamic/private', () => ({ env: process.env }));
+
 import { createAdaptationResponse } from './adapt';
 import type { Dish, HealthProfile } from './prompt';
 
