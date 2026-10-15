@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/ui/Button.svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -51,7 +52,7 @@
 				<p class="error">{form.errors.notes}</p>
 			{/if}
 
-			<button class="button primary" type="submit">Save profile</button>
+			<Button type="submit" variant="primary">Save profile</Button>
 		</form>
 	</div>
 </section>

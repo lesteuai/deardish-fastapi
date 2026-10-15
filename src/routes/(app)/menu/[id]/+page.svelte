@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/ui/Button.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -19,7 +20,7 @@
 			{/each}
 		</ul>
 
-		<a class="button primary" href={`/adapt/${data.dish.id}`}>Adapt this dish</a>
+		<Button href={`/adapt/${data.dish.id}`} variant="primary">Adapt this dish</Button>
 	</article>
 </section>
 

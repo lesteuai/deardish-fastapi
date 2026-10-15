@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Button from '$lib/ui/Button.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -101,7 +102,7 @@
 		<h1>{data.dish.name}</h1>
 		<p>{data.dish.description}</p>
 
-		<button class="button primary" onclick={handleAdapt} disabled={busy}>Adapt this dish</button>
+		<Button variant="primary" onclick={handleAdapt} disabled={busy}>Adapt this dish</Button>
 	</article>
 
 	{#if status === 'streaming'}
@@ -123,7 +124,7 @@
 		<h2>Save as meal</h2>
 		<label for="meal-title">Title</label>
 		<input id="meal-title" bind:value={title} maxlength="200" />
-		<button class="button primary" onclick={handleSave} disabled={!canSave}>Save as meal</button>
+		<Button variant="primary" onclick={handleSave} disabled={!canSave}>Save as meal</Button>
 	</article>
 </section>
 
@@ -169,7 +170,7 @@
 		margin: 0;
 	}
 
-	.save button {
+	.save :global(button) {
 		align-self: flex-start;
 	}
 </style>

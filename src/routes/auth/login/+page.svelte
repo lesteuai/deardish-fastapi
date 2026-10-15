@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/ui/Button.svelte';
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
@@ -30,7 +31,7 @@
 			<p class="error">{form.errors.password}</p>
 		{/if}
 
-		<button class="button primary" type="submit">Sign in</button>
+		<Button type="submit" variant="primary">Sign in</Button>
 	</form>
 
 	<p class="muted">New to DearDish? <a href="/auth/register">Create an account</a></p>

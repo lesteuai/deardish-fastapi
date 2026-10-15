@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/ui/Button.svelte';
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
@@ -48,7 +49,7 @@
 			<p class="error">{form.errors.confirmPassword}</p>
 		{/if}
 
-		<button class="button primary" type="submit">Register</button>
+		<Button type="submit" variant="primary">Register</Button>
 	</form>
 
 	<p class="muted">Already have an account? <a href="/auth/login">Sign in</a></p>

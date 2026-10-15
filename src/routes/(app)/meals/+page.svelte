@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import Button from '$lib/ui/Button.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -50,7 +51,7 @@
 	{#if data.meals.length === 0}
 		<div class="card empty">
 			<p class="muted">You have not saved any meals yet.</p>
-			<a class="button primary" href="/menu">Browse the menu</a>
+			<Button href="/menu" variant="primary">Browse the menu</Button>
 		</div>
 	{:else}
 		{#each data.meals as meal (meal.id)}
@@ -60,14 +61,13 @@
 					<span class="date-pill">Saved {formatDate(meal.createdAt)}</span>
 				</div>
 				<p>{preview(meal.content)}</p>
-				<button
-					class="button"
+				<Button
 					type="button"
 					disabled={deletingId === meal.id}
 					onclick={() => handleDelete(meal.id)}
 				>
 					{deletingId === meal.id ? 'Deleting...' : 'Delete'}
-				</button>
+				</Button>
 			</article>
 		{/each}
 	{/if}

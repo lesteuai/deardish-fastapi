@@ -1,9 +1,12 @@
 <script lang="ts">
 	import '../app.css';
+	import Button from '$lib/ui/Button.svelte';
+	import Dropdown from '$lib/ui/Dropdown.svelte';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
+	let menuOpen = $state(false);
 </script>
 
 <header class="site-header">
@@ -13,13 +16,15 @@
 	</a>
 	<nav>
 		{#if data.user}
-			<a href="/menu">Menu</a>
-			<a href="/meals">My Meals</a>
-			<a href="/profile">Profile</a>
-			<span class="muted">{data.user.email}</span>
-			<form method="POST" action="/auth/logout">
-				<button class="button" type="submit">Log out</button>
-			</form>
+			<Dropdown bind:open={menuOpen}>
+				<a href="/menu" onclick={() => (menuOpen = false)}>Menu</a>
+				<a href="/meals" onclick={() => (menuOpen = false)}>My Meals</a>
+				<a href="/profile" onclick={() => (menuOpen = false)}>Profile</a>
+				<span class="nav-email muted">{data.user.email}</span>
+				<form method="POST" action="/auth/logout">
+					<Button type="submit">Log out</Button>
+				</form>
+			</Dropdown>
 		{:else}
 			<a href="/auth/login">Sign in</a>
 		{/if}
@@ -35,5 +40,11 @@
 		flex-direction: row;
 		max-width: none;
 		margin: 0;
+	}
+
+	@media (max-width: 640px) {
+		.nav-email {
+			padding: 0.4rem 0.9rem;
+		}
 	}
 </style>
