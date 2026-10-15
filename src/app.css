@@ -195,6 +195,18 @@ main {
 	border-color: var(--berry-dark);
 }
 
+.button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+	box-shadow: none;
+}
+
+.button.primary:disabled {
+	background: var(--berry-soft);
+	border-color: var(--berry-soft);
+	color: var(--berry-dark);
+}
+
 .card {
 	background: var(--card);
 	border: 2px solid var(--border);
