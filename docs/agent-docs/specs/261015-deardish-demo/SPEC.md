@@ -1,6 +1,6 @@
 # Spec: DearDish Demo
 
-Status: approved (adversarial review round 1 disagreed, round 2 AGREED, 2026-10-15)
+Status: implemented (approved: adversarial review round 1 disagreed, round 2 AGREED, 2026-10-15)
 Request: "Build a demo version of this project: DearDish, an AI-powered foodtech startup focused on making restaurant-style meals more accessible to people facing health challenges. Build it with SvelteKit, Neon database and auth, bun, Vercel AI SDK."
 
 ## Overview
