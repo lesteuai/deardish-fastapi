@@ -4,7 +4,7 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<section class="auth">
+<section class="auth card">
 	<h1>Create your account</h1>
 
 	<form method="POST">
@@ -53,3 +53,17 @@
 
 	<p class="muted">Already have an account? <a href="/auth/login">Sign in</a></p>
 </section>
+
+<style>
+	.auth {
+		max-width: 28rem;
+		margin: 1.5rem auto;
+		border-top: 4px solid var(--aqua);
+		padding: 1.75rem 2rem;
+	}
+
+	.auth h1 {
+		color: var(--berry);
+		margin-top: 0;
+	}
+</style>

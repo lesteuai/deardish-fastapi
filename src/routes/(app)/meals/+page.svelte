@@ -48,13 +48,17 @@
 	{/if}
 
 	{#if data.meals.length === 0}
-		<p class="muted">You have not saved any meals yet.</p>
-		<a class="button primary" href="/menu">Browse the menu</a>
+		<div class="card empty">
+			<p class="muted">You have not saved any meals yet.</p>
+			<a class="button primary" href="/menu">Browse the menu</a>
+		</div>
 	{:else}
 		{#each data.meals as meal (meal.id)}
 			<article class="card">
-				<h2>{meal.title}</h2>
-				<p class="muted">Saved {formatDate(meal.createdAt)}</p>
+				<div class="meal-head">
+					<h2>{meal.title}</h2>
+					<span class="date-pill">Saved {formatDate(meal.createdAt)}</span>
+				</div>
 				<p>{preview(meal.content)}</p>
 				<button
 					class="button"
@@ -68,3 +72,28 @@
 		{/each}
 	{/if}
 </section>
+
+<style>
+	.meal-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.date-pill {
+		display: inline-block;
+		background: var(--sun-soft);
+		color: var(--sun-dark);
+		border: 1px solid var(--sun);
+		border-radius: var(--radius-pill);
+		padding: 0.2rem 0.7rem;
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+
+	.empty {
+		text-align: center;
+	}
+</style>

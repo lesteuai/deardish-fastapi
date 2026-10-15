@@ -38,4 +38,14 @@ describe('profile page', () => {
 		expect(getByText('Notes must be 2000 characters or fewer')).toBeTruthy();
 		expect((getByLabelText('Conditions') as HTMLInputElement).value).toBe('over-limit text');
 	});
+
+	it('wraps the profile form in a card container', () => {
+		const { getByLabelText } = render(ProfilePage, {
+			props: { data: { profile }, form: undefined } as never
+		});
+
+		const form = getByLabelText('Conditions').closest('form');
+		expect(form).not.toBeNull();
+		expect(form!.closest('.card')).not.toBeNull();
+	});
 });

@@ -35,4 +35,11 @@ describe('login page', () => {
 
 		expect(queryByText('Invalid email or password')).toBeNull();
 	});
+
+	it('renders the sign in section inside a card container', () => {
+		const { getByRole } = render(LoginPage, { props: { form: undefined } as never });
+
+		const heading = getByRole('heading', { name: 'Sign in' });
+		expect(heading.closest('.card')).not.toBeNull();
+	});
 });

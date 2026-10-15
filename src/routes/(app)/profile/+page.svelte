@@ -21,35 +21,48 @@
 		conditions, and folds your notes into every adaptation.
 	</p>
 
-	<form method="POST">
-		{#if form?.errors?.form}
-			<p class="error">{form.errors.form}</p>
-		{/if}
+	<div class="card">
+		<form method="POST">
+			{#if form?.errors?.form}
+				<p class="error">{form.errors.form}</p>
+			{/if}
 
-		<label for="conditions">Conditions</label>
-		<input id="conditions" name="conditions" value={values.conditions} />
-		{#if form?.errors?.conditions}
-			<p class="error">{form.errors.conditions}</p>
-		{/if}
+			<label for="conditions">Conditions</label>
+			<input id="conditions" name="conditions" value={values.conditions} />
+			{#if form?.errors?.conditions}
+				<p class="error">{form.errors.conditions}</p>
+			{/if}
 
-		<label for="allergies">Allergies</label>
-		<input id="allergies" name="allergies" value={values.allergies} />
-		{#if form?.errors?.allergies}
-			<p class="error">{form.errors.allergies}</p>
-		{/if}
+			<label for="allergies">Allergies</label>
+			<input id="allergies" name="allergies" value={values.allergies} />
+			{#if form?.errors?.allergies}
+				<p class="error">{form.errors.allergies}</p>
+			{/if}
 
-		<label for="dietaryPreferences">Dietary preferences</label>
-		<input id="dietaryPreferences" name="dietaryPreferences" value={values.dietaryPreferences} />
-		{#if form?.errors?.dietaryPreferences}
-			<p class="error">{form.errors.dietaryPreferences}</p>
-		{/if}
+			<label for="dietaryPreferences">Dietary preferences</label>
+			<input id="dietaryPreferences" name="dietaryPreferences" value={values.dietaryPreferences} />
+			{#if form?.errors?.dietaryPreferences}
+				<p class="error">{form.errors.dietaryPreferences}</p>
+			{/if}
 
-		<label for="notes">Notes</label>
-		<textarea id="notes" name="notes" rows="5">{values.notes}</textarea>
-		{#if form?.errors?.notes}
-			<p class="error">{form.errors.notes}</p>
-		{/if}
+			<label for="notes">Notes</label>
+			<textarea id="notes" name="notes" rows="5">{values.notes}</textarea>
+			{#if form?.errors?.notes}
+				<p class="error">{form.errors.notes}</p>
+			{/if}
 
-		<button class="button primary" type="submit">Save profile</button>
-	</form>
+			<button class="button primary" type="submit">Save profile</button>
+		</form>
+	</div>
 </section>
+
+<style>
+	form {
+		border-left: 4px solid var(--sun);
+		padding-left: 1rem;
+	}
+
+	form label {
+		color: var(--leaf-dark);
+	}
+</style>

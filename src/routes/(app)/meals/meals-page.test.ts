@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/svelte';
+
+vi.mock('$app/navigation', () => ({ goto: vi.fn(), invalidateAll: vi.fn() }));
+
 import MealsPage from './+page.svelte';
 
 const meals = [
@@ -43,5 +46,23 @@ describe('meals page', () => {
 		const link = getByRole('link', { name: 'Browse the menu' });
 		expect(link.getAttribute('href')).toBe('/menu');
 		expect(queryByRole('button', { name: 'Delete' })).toBeNull();
+	});
+
+	it('renders each saved date inside a date-pill element', () => {
+		const { container } = render(MealsPage, { props: { data: { meals } } as never });
+
+		const pills = container.querySelectorAll('.date-pill');
+		expect(pills).toHaveLength(meals.length);
+		for (const pill of pills) {
+			expect(pill.textContent).toContain('Saved');
+		}
+	});
+
+	it('renders the empty state inside a card empty container', () => {
+		const { container } = render(MealsPage, { props: { data: { meals: [] } } as never });
+
+		const empty = container.querySelector('.card.empty');
+		expect(empty).not.toBeNull();
+		expect(empty!.textContent).toContain('You have not saved any meals yet.');
 	});
 });
