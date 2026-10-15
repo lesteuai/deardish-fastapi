@@ -1,6 +1,6 @@
 # Spec: DearDish Demo
 
-Status: implemented (approved: adversarial review round 1 disagreed, round 2 AGREED, 2026-10-15)
+Status: verified (implemented and e2e-verified 2026-10-15)
 Request: "Build a demo version of this project: DearDish, an AI-powered foodtech startup focused on making restaurant-style meals more accessible to people facing health challenges. Build it with SvelteKit, Neon database and auth, bun, Vercel AI SDK."
 
 ## Overview
@@ -39,3 +39,12 @@ DearDish helps people facing health challenges enjoy restaurant-style meals adap
 
 ## Open Questions
 - Q-1: Switching to Neon hosted Auth once its project keys are provided. (blocks: nothing)
+
+## Verification
+- AC-1: pass (`GET /` -> 200, contains DearDish branding and the mission text "DearDish makes restaurant-style meals accessible to people facing health challenges."; e2e round 2, 2026-10-15)
+- AC-2: pass (invalid email -> 400 visible error; short password -> 400; valid register -> 302 /menu + httpOnly `deardish_session` cookie; duplicate email in a different case -> 400 visible error "An account with this email already exists"; wrong-password login -> 400, no cookie; correct login -> 302 + cookie; logout -> cookie cleared (Max-Age=0), signed-out /menu -> 302 /auth/login; e2e round 2)
+- AC-3: pass (signed-in GET /profile -> 200; POST with all four fields -> 302 and values persist across reload; notes of 2001 chars -> 400 visible error with previous values unchanged (atomic reject); e2e round 2)
+- AC-4: pass (GET /menu -> 200 listing all 6 seeded dishes with name, cuisine, description; GET /menu/<id> -> 200 with full ingredient list and an "Adapt this dish" link; GET /menu/<random uuid> -> 404; signed-out /menu -> 302 /auth/login; e2e round 2)
+- AC-5: pass (signed-out POST /api/adapt -> 401 JSON; missing/malformed dishId -> 400 JSON; unknown dishId -> 404 JSON; valid dishId -> 200 text/plain; charset=utf-8 with a real non-empty streamed adaptation (~1.9 KB read); second call with populated profile -> 200 non-empty; prompt-includes-profile and empty-profile-fallback verified by unit tests (prompt.test.ts, adapt.test.ts incl. 502 JSON on pre-stream provider failure); e2e round 2)
+- AC-6: pass (GET /meals with session -> 200; POST /api/meals with empty title -> 400 field error; valid -> 201 {id}; GET /meals shows the saved title; DELETE -> 204; repeat DELETE -> 404; GET /meals no longer lists it; signed-out POST/DELETE -> 401; owner scoping unit-tested in meals.test.ts; e2e round 2)
+- AC-7: pass (bun run lint -> exit 0; bun run check -> 0 errors and 0 warnings; bun run test -> 20 files, 158 tests passed; bun run build -> adapter-node build succeeds; e2e round 2)
