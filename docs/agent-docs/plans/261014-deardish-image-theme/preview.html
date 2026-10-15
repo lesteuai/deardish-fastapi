@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>DearDish Theme Preview</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--cream: #f7f3eb;
+				--cream-dark: #eee7db;
+				--ink: #2d2327;
+				--ink-soft: #6e5f64;
+				--berry: #e36580;
+				--berry-dark: #c84b68;
+				--berry-soft: #fceef2;
+				--sun: #f2c12e;
+				--sun-dark: #c4920d;
+				--sun-soft: #fef7dc;
+				--aqua: #63c7c6;
+				--aqua-dark: #2f8f8e;
+				--aqua-soft: #e6f6f6;
+				--leaf: #5cb275;
+				--leaf-dark: #3f8c56;
+				--leaf-soft: #eaf6ee;
+				--tomato: var(--berry);
+				--tomato-dark: var(--berry-dark);
+				--basil: var(--leaf);
+				--basil-dark: var(--leaf-dark);
+				--card: #fffdf9;
+				--border: #e6ddd0;
+				--radius: 20px;
+				--radius-pill: 999px;
+				--shadow: 0 8px 24px rgba(45, 35, 39, 0.07);
+				--font-display: 'Fredoka', 'Nunito', system-ui, -apple-system, sans-serif;
+				--font-body: 'Nunito', 'Inter', system-ui, -apple-system, sans-serif;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				background: var(--cream);
+				background-image:
+					radial-gradient(circle at 12% 16%, rgba(99, 199, 198, 0.12) 0, transparent 22%),
+					radial-gradient(circle at 88% 12%, rgba(242, 193, 46, 0.14) 0, transparent 20%),
+					radial-gradient(circle at 82% 78%, rgba(92, 178, 117, 0.1) 0, transparent 24%);
+				color: var(--ink);
+				font-family: var(--font-body);
+				line-height: 1.6;
+			}
+
+			h1,
+			h2,
+			h3,
+			.brand {
+				font-family: var(--font-display);
+				letter-spacing: -0.01em;
+			}
+
+			a {
+				color: var(--berry-dark);
+			}
+
+			.site-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1rem;
+				padding: 0.85rem 2rem;
+				background: rgba(255, 253, 249, 0.92);
+				backdrop-filter: blur(8px);
+				border-bottom: 3px solid var(--aqua);
+				position: sticky;
+				top: 0;
+				z-index: 10;
+			}
+
+			.brand {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.65rem;
+				font-size: 1.65rem;
+				font-weight: 700;
+				color: var(--berry);
+				text-decoration: none;
+			}
+
+			.brand-logo {
+				width: 44px;
+				height: 44px;
+				border-radius: 12px;
+				object-fit: cover;
+				border: 2px solid var(--sun);
+				background: var(--cream);
+			}
+
+			.site-header nav {
+				display: flex;
+				align-items: center;
+				gap: 0.65rem;
+				flex-wrap: wrap;
+			}
+
+			.site-header nav a {
+				color: var(--ink);
+				text-decoration: none;
+				font-weight: 700;
+				padding: 0.4rem 0.9rem;
+				border-radius: var(--radius-pill);
+				transition:
+					background 0.15s ease,
+					color 0.15s ease;
+			}
+
+			.site-header nav a:hover,
+			.site-header nav a.active {
+				background: var(--leaf-soft);
+				color: var(--leaf-dark);
+			}
+
+			main {
+				max-width: 980px;
+				margin: 0 auto;
+				padding: 2rem;
+			}
+
+			.hero {
+				text-align: center;
+				padding: 2.5rem 2rem 3rem;
+				background: var(--card);
+				border: 2px solid var(--border);
+				border-radius: 28px;
+				box-shadow: var(--shadow);
+				margin-bottom: 2.5rem;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.hero::after {
+				content: '';
+				display: block;
+				width: 140px;
+				height: 8px;
+				background: var(--aqua);
+				border-radius: var(--radius-pill);
+				margin: 2rem auto 0;
+			}
+
+			.hero-logo {
+				width: 180px;
+				height: 180px;
+				object-fit: contain;
+				border-radius: 24px;
+				margin-bottom: 0.75rem;
+			}
+
+			.hero h1 {
+				font-size: 3.1rem;
+				margin: 0 0 0.75rem;
+				color: var(--berry);
+			}
+
+			.mission {
+				font-size: 1.25rem;
+				max-width: 38rem;
+				margin: 0 auto 1.75rem;
+				color: var(--ink-soft);
+				font-weight: 600;
+			}
+
+			.actions {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+
+			.button {
+				display: inline-block;
+				padding: 0.65rem 1.5rem;
+				border-radius: var(--radius-pill);
+				border: 2px solid var(--berry);
+				background: var(--card);
+				color: var(--berry-dark);
+				text-decoration: none;
+				font-family: var(--font-display);
+				font-weight: 600;
+				font-size: 1rem;
+				cursor: pointer;
+				transition:
+					transform 0.12s ease,
+					background 0.15s ease,
+					box-shadow 0.15s ease;
+			}
+
+			.button:hover {
+				background: var(--berry-soft);
+				transform: translateY(-1px);
+			}
+
+			.button.primary {
+				background: var(--berry);
+				color: #fff;
+				box-shadow: 0 4px 0 var(--berry-dark);
+			}
+
+			.button.primary:hover {
+				background: var(--berry-dark);
+				border-color: var(--berry-dark);
+			}
+
+			.section-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-bottom: 1rem;
+			}
+
+			.section-head h2 {
+				font-size: 1.9rem;
+				color: var(--berry);
+				margin: 0;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+				gap: 1.25rem;
+				margin-bottom: 2.5rem;
+			}
+
+			.card {
+				background: var(--card);
+				border: 2px solid var(--border);
+				border-radius: var(--radius);
+				box-shadow: var(--shadow);
+				padding: 1.35rem 1.5rem;
+				margin-bottom: 1rem;
+				transition:
+					transform 0.15s ease,
+					border-color 0.15s ease;
+			}
+
+			.dish-card {
+				display: block;
+				color: inherit;
+				text-decoration: none;
+				margin-bottom: 0;
+			}
+
+			.dish-card:hover {
+				transform: translateY(-3px);
+				border-color: var(--aqua);
+			}
+
+			.card h2,
+			.card h3 {
+				margin: 0.5rem 0 0.4rem;
+				color: var(--berry);
+			}
+
+			.card .cuisine {
+				display: inline-block;
+				text-transform: uppercase;
+				font-size: 0.75rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				padding: 0.2rem 0.7rem;
+				border-radius: var(--radius-pill);
+				background: var(--aqua-soft);
+				color: var(--aqua-dark);
+			}
+
+			.ingredients {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				list-style: none;
+				padding: 0;
+				margin: 0.75rem 0 1.25rem;
+			}
+
+			.ingredients li {
+				background: var(--sun-soft);
+				color: var(--ink);
+				border: 1px solid var(--sun);
+				padding: 0.25rem 0.75rem;
+				border-radius: var(--radius-pill);
+				font-size: 0.9rem;
+				font-weight: 600;
+			}
+
+			.recipe-box {
+				background: var(--leaf-soft);
+				border: 2px dashed var(--leaf);
+				border-radius: 16px;
+				padding: 1rem 1.25rem;
+				margin-top: 1rem;
+			}
+
+			.recipe-box h3 {
+				color: var(--leaf-dark);
+				margin-top: 0;
+			}
+
+			.muted {
+				color: var(--ink-soft);
+			}
+		</style>
+	</head>
+	<body>
+		<header class="site-header">
+			<a class="brand" href="/menu">
+				<img class="brand-logo" src="../../../../static/deardish.jpg" alt="" />
+				<span>DearDish</span>
+			</a>
+			<nav>
+				<a class="active" href="/menu">Menu</a>
+				<a href="/meals">My Meals</a>
+				<a href="/profile">Profile</a>
+				<span class="muted">chef@deardish.app</span>
+				<button class="button" type="button">Log out</button>
+			</nav>
+		</header>
+
+		<main>
+			<section class="hero">
+				<img class="hero-logo" src="../../../../static/deardish.jpg" alt="DearDish logo" />
+				<h1>DearDish</h1>
+				<p class="mission">
+					DearDish makes restaurant-style meals accessible to people facing health challenges.
+				</p>
+				<div class="actions">
+					<a class="button primary" href="/auth/register">Register</a>
+					<a class="button" href="/auth/login">Sign in</a>
+				</div>
+			</section>
+
+			<section>
+				<div class="section-head">
+					<h2>Menu</h2>
+					<span class="muted">Restaurant-style dishes you can adapt to your health profile.</span>
+				</div>
+
+				<div class="grid">
+					<a class="card dish-card" href="#dish-1">
+						<span class="cuisine">Indian</span>
+						<h2>Paneer Butter Masala</h2>
+						<p>Velvety spiced tomato and cashew gravy simmered with tender cubes of paneer.</p>
+					</a>
+					<a class="card dish-card" href="#dish-2">
+						<span class="cuisine">Japanese</span>
+						<h2>Miso Glazed Salmon</h2>
+						<p>Caramelized white miso salmon fillet served over sesame-ginger bok choy.</p>
+					</a>
+					<a class="card dish-card" href="#dish-3">
+						<span class="cuisine">Mexican</span>
+						<h2>Tacos al Pastor</h2>
+						<p>Achiote-marinated roast pork with charred pineapple, cilantro, and warm corn tortillas.</p>
+					</a>
+				</div>
+			</section>
+
+			<section>
+				<article class="card">
+					<span class="cuisine">Japanese</span>
+					<h2>Miso Glazed Salmon</h2>
+					<p>Caramelized white miso salmon fillet served over sesame-ginger bok choy.</p>
+
+					<h3>Ingredients</h3>
+					<ul class="ingredients">
+						<li>wild salmon fillet</li>
+						<li>white miso paste</li>
+						<li>mirin</li>
+						<li>baby bok choy</li>
+						<li>toasted sesame oil</li>
+						<li>fresh ginger</li>
+					</ul>
+
+					<button class="button primary" type="button">Adapt this dish</button>
+
+					<div class="recipe-box">
+						<h3>Your adapted recipe (Low-Sodium &amp; Heart-Healthy)</h3>
+						<p>
+							Swapped standard miso for reduced-sodium sweet white miso diluted with unsalted dashi
+							and fresh grated ginger, preserving the savory umami glaze with 55% less sodium.
+						</p>
+					</div>
+				</article>
+			</section>
+		</main>
+	</body>
+</html>

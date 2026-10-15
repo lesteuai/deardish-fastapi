@@ -47,7 +47,9 @@ Env loading: bun and vite auto-load `.env`; the built server needs `node --env-f
 - Form actions return `fail(400, { errors, values })`; `errors` comes from `zodFieldErrors`, `values` re-fills the form.
 - All meal/profile queries are owner-scoped (filter by the session user id).
 - Test files are colocated with source but never use the `+` prefix under `src/routes/` (SvelteKit reserves it; `svelte-kit sync` crashes on `+`-prefixed test files). Unit tests mock the `db` and `auth` modules (`src/lib/server/db`, `src/lib/server/auth`) with `vi.mock`; no test needs real env vars or a database.
-- Styling is plain CSS in `src/app.css` (warm food palette, no CSS framework).
+- Styling is plain CSS in `src/app.css`, no CSS framework. The palette is derived from the brand artwork `static/deardish.jpg`: berry (`--berry`), sun (`--sun`), aqua (`--aqua`), and leaf (`--leaf`) tokens with `-dark`/`-soft` variants on a cream background (`--cream`); `--tomato`/`--basil` are kept as aliases for the berry and leaf tokens. Cards use `--radius` (20px), buttons and pills use `--radius-pill` (999px).
+- Typography uses display/body font variables (`--font-display` Fredoka, `--font-body` Nunito) loaded via Google Fonts links in `src/app.html`.
+- The brand logo is `static/deardish.jpg`, rendered in the header (`src/routes/+layout.svelte`) and the landing hero (`src/routes/+page.svelte`). The favicon is `static/favicon.jpg` (`/favicon.jpg` in `src/app.html`).
 - Minimal comments; no em dashes in code or docs.
 - `bun run build` output is `build/` (adapter-node); `drizzle-kit` migrations dir is `drizzle/`.
 
