@@ -20,6 +20,12 @@
 				<a href="/menu" onclick={() => (menuOpen = false)}>Menu</a>
 				<a href="/meals" onclick={() => (menuOpen = false)}>My Meals</a>
 				<a href="/profile" onclick={() => (menuOpen = false)}>Profile</a>
+				<a
+					href="https://tally.so/r/YjDQvd?email={encodeURIComponent(data.user.email)}"
+					target="_blank"
+					rel="noopener noreferrer"
+					onclick={() => (menuOpen = false)}
+				>Feedback</a>
 				<span class="nav-email muted">{data.user.email}</span>
 				<form method="POST" action="/auth/logout">
 					<Button type="submit">Log out</Button>

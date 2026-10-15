@@ -7,6 +7,6 @@ export const actions: Actions = {
 		const token = cookies.get(SESSION_COOKIE);
 		if (token) await destroySession(token);
 		clearSessionCookie(cookies);
-		redirect(302, '/auth/login');
+		redirect(302, '/');
 	}
 };

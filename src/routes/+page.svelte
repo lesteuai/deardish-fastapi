@@ -10,4 +10,19 @@
 		<Button href="/auth/register" variant="primary">Register</Button>
 		<Button href="/auth/login">Sign in</Button>
 	</div>
+	<a
+		class="feedback-link"
+		href="https://tally.so/r/YjDQvd"
+		target="_blank"
+		rel="noopener noreferrer"
+	>Share your feedback</a>
 </section>
+
+<style>
+	.feedback-link {
+		margin-top: 1rem;
+		display: inline-block;
+		color: var(--berry);
+		text-decoration: underline;
+	}
+</style>

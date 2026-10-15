@@ -215,7 +215,7 @@ describe('register action', () => {
 });
 
 describe('logout action', () => {
-	it('destroys the session, clears the cookie, and redirects to the login page', async () => {
+	it('destroys the session, clears the cookie, and redirects to the root page', async () => {
 		const cookies = makeCookies('session-token');
 
 		let thrown: { status?: number; location?: string } | undefined;
@@ -225,7 +225,7 @@ describe('logout action', () => {
 			thrown = error as { status?: number; location?: string };
 		}
 
-		expect(thrown?.location).toBe('/auth/login');
+		expect(thrown?.location).toBe('/');
 		expect(authMock.destroySession).toHaveBeenCalledWith('session-token');
 		expect(authMock.clearSessionCookie).toHaveBeenCalledWith(cookies);
 		expect(thrown).toBeDefined();
