@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+export function zodFieldErrors(issues: z.core.$ZodIssue[]): Record<string, string> {
+	const errors: Record<string, string> = {};
+	for (const issue of issues) {
+		const key = String(issue.path[0] ?? 'form');
+		errors[key] ??= issue.message;
+	}
+	return errors;
+}
+
 const shortProfileText = z.string().trim().max(200).default('');
 
 export const registerSchema = z.object({
