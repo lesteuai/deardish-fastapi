@@ -1,16 +1,31 @@
 :root {
-	--cream: #fff8f0;
-	--cream-dark: #f6ead9;
-	--ink: #2b2118;
-	--ink-soft: #6b5d4f;
-	--tomato: #d64541;
-	--tomato-dark: #b23431;
-	--basil: #4a7c59;
-	--basil-dark: #3a6347;
-	--card: #ffffff;
-	--border: #e6d8c6;
-	--radius: 12px;
-	--shadow: 0 4px 16px rgba(43, 33, 24, 0.08);
+	--cream: #f7f3eb;
+	--cream-dark: #eee7db;
+	--ink: #2d2327;
+	--ink-soft: #6e5f64;
+	--berry: #e36580;
+	--berry-dark: #c84b68;
+	--berry-soft: #fceef2;
+	--sun: #f2c12e;
+	--sun-dark: #c4920d;
+	--sun-soft: #fef7dc;
+	--aqua: #63c7c6;
+	--aqua-dark: #2f8f8e;
+	--aqua-soft: #e6f6f6;
+	--leaf: #5cb275;
+	--leaf-dark: #3f8c56;
+	--leaf-soft: #eaf6ee;
+	--tomato: var(--berry);
+	--tomato-dark: var(--berry-dark);
+	--basil: var(--leaf);
+	--basil-dark: var(--leaf-dark);
+	--card: #fffdf9;
+	--border: #e6ddd0;
+	--radius: 20px;
+	--radius-pill: 999px;
+	--shadow: 0 8px 24px rgba(45, 35, 39, 0.07);
+	--font-display: 'Fredoka', 'Nunito', system-ui, -apple-system, sans-serif;
+	--font-body: 'Nunito', 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -25,14 +40,25 @@ body {
 
 body {
 	background: var(--cream);
+	background-image:
+		radial-gradient(circle at 12% 16%, rgba(99, 199, 198, 0.12) 0, transparent 22%),
+		radial-gradient(circle at 88% 12%, rgba(242, 193, 46, 0.14) 0, transparent 20%),
+		radial-gradient(circle at 82% 78%, rgba(92, 178, 117, 0.1) 0, transparent 24%);
 	color: var(--ink);
-	font-family:
-		'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	font-family: var(--font-body);
 	line-height: 1.6;
 }
 
+h1,
+h2,
+h3,
+.brand {
+	font-family: var(--font-display);
+	letter-spacing: -0.01em;
+}
+
 a {
-	color: var(--tomato);
+	color: var(--berry-dark);
 }
 
 .site-header {
@@ -40,53 +66,86 @@ a {
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
-	padding: 1rem 2rem;
-	background: var(--card);
-	border-bottom: 2px solid var(--tomato);
+	padding: 0.85rem 2rem;
+	background: rgba(255, 253, 249, 0.92);
+	backdrop-filter: blur(8px);
+	border-bottom: 3px solid var(--aqua);
 	position: sticky;
 	top: 0;
 	z-index: 10;
 }
 
 .brand {
-	font-size: 1.5rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	font-size: 1.65rem;
 	font-weight: 700;
-	color: var(--tomato);
+	color: var(--berry);
 	text-decoration: none;
-	letter-spacing: -0.02em;
+}
+
+.brand-logo {
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	object-fit: cover;
+	border: 2px solid var(--sun);
+	background: var(--cream);
 }
 
 .site-header nav {
 	display: flex;
 	align-items: center;
-	gap: 1.25rem;
+	gap: 0.65rem;
+	flex-wrap: wrap;
 }
 
 .site-header nav a {
 	color: var(--ink);
 	text-decoration: none;
-	font-weight: 500;
+	font-weight: 700;
+	padding: 0.4rem 0.9rem;
+	border-radius: var(--radius-pill);
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
 }
 
-.site-header nav a:hover {
-	color: var(--basil);
+.site-header nav a:hover,
+.site-header nav a.active {
+	background: var(--leaf-soft);
+	color: var(--leaf-dark);
 }
 
 main {
-	max-width: 960px;
+	max-width: 980px;
 	margin: 0 auto;
 	padding: 2rem;
 }
 
 .hero {
 	text-align: center;
-	padding: 3rem 1rem;
+	padding: 2.5rem 2rem 3rem;
+	background: var(--card);
+	border: 2px solid var(--border);
+	border-radius: 28px;
+	box-shadow: var(--shadow);
+	margin-bottom: 2.5rem;
+}
+
+.hero-logo {
+	width: 180px;
+	height: 180px;
+	object-fit: contain;
+	border-radius: 24px;
+	margin-bottom: 0.75rem;
 }
 
 .hero h1 {
 	font-size: 3rem;
 	margin: 0 0 1rem;
-	color: var(--tomato);
+	color: var(--berry);
 }
 
 .mission {
@@ -94,6 +153,7 @@ main {
 	max-width: 40rem;
 	margin: 0 auto 2rem;
 	color: var(--ink-soft);
+	font-weight: 600;
 }
 
 .actions {
@@ -105,34 +165,39 @@ main {
 
 .button {
 	display: inline-block;
-	padding: 0.65rem 1.4rem;
-	border-radius: var(--radius);
-	border: 2px solid var(--tomato);
+	padding: 0.65rem 1.5rem;
+	border-radius: var(--radius-pill);
+	border: 2px solid var(--berry);
 	background: transparent;
-	color: var(--tomato);
+	color: var(--berry-dark);
 	text-decoration: none;
+	font-family: var(--font-display);
 	font-weight: 600;
 	cursor: pointer;
+	transition:
+		transform 0.12s ease,
+		background 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
 .button:hover {
-	background: var(--tomato);
-	color: #fff;
+	background: var(--berry-soft);
 }
 
 .button.primary {
-	background: var(--tomato);
+	background: var(--berry);
 	color: #fff;
+	box-shadow: 0 4px 0 var(--berry-dark);
 }
 
 .button.primary:hover {
-	background: var(--tomato-dark);
-	border-color: var(--tomato-dark);
+	background: var(--berry-dark);
+	border-color: var(--berry-dark);
 }
 
 .card {
 	background: var(--card);
-	border: 1px solid var(--border);
+	border: 2px solid var(--border);
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
 	padding: 1.25rem 1.5rem;
@@ -142,14 +207,19 @@ main {
 .card h2,
 .card h3 {
 	margin-top: 0;
-	color: var(--basil-dark);
+	color: var(--berry);
 }
 
 .card .cuisine {
+	display: inline-block;
 	text-transform: uppercase;
 	font-size: 0.75rem;
+	font-weight: 700;
 	letter-spacing: 0.08em;
-	color: var(--ink-soft);
+	padding: 0.2rem 0.7rem;
+	border-radius: var(--radius-pill);
+	background: var(--aqua-soft);
+	color: var(--aqua-dark);
 }
 
 form {
@@ -178,12 +248,12 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-	outline: 2px solid var(--basil);
+	outline: 2px solid var(--aqua);
 	outline-offset: 1px;
 }
 
 .error {
-	color: var(--tomato-dark);
+	color: var(--berry-dark);
 	font-size: 0.9rem;
 }
 

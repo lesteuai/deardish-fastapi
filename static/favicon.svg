@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DearDish">
-	<circle cx="32" cy="34" r="22" fill="#fff8f0" stroke="#d64541" stroke-width="3" />
-	<circle cx="32" cy="34" r="14" fill="#f7d9b5" />
-	<path d="M10 6v14c0 2 2 4 4 4v30h4V24c2 0 4-2 4-4V6h-3v12h-3V6h-3v12h-3V6z" fill="#4a7c59" />
-	<path d="M50 6c-4 0-7 5-7 12 0 5 2 9 5 10v26h4V6z" fill="#4a7c59" />
-</svg>

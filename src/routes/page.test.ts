@@ -19,6 +19,13 @@ describe('landing page', () => {
 		expect(getByRole('heading', { name: 'DearDish' })).toBeTruthy();
 	});
 
+	it('renders the DearDish brand image', () => {
+		const { getByRole } = render(Page);
+
+		const logo = getByRole('img', { name: 'DearDish logo' });
+		expect(logo.getAttribute('src')).toBe('/deardish.jpg');
+	});
+
 	it('links to the register and sign in pages', () => {
 		const { getByRole } = render(Page);
 
