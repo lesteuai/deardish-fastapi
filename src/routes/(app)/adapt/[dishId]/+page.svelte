@@ -113,7 +113,7 @@
 	{/if}
 
 	{#if content}
-		<article class="card">
+		<article class="card recipe-card">
 			<h2>Your adapted recipe</h2>
 			<pre class="recipe">{content}</pre>
 		</article>
@@ -131,6 +131,20 @@
 	.back {
 		display: inline-block;
 		margin-bottom: 1rem;
+		padding: 0.35rem 0.9rem;
+		border: 2px solid var(--berry);
+		border-radius: var(--radius-pill);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.recipe-card {
+		background: var(--leaf-soft);
+		border: 2px dashed var(--leaf);
+	}
+
+	.recipe-card h2 {
+		color: var(--leaf-dark);
 	}
 
 	article h1 {

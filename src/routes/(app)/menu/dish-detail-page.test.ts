@@ -69,6 +69,14 @@ describe('dish detail page', () => {
 		}
 	});
 
+	it('renders the ingredients as a list carrying the ingredients class', () => {
+		const { getByText } = render(DishDetailPage, { props: { data: { dish } } as never });
+
+		const list = getByText(dish.ingredients[0]).parentElement;
+		expect(list?.tagName).toBe('UL');
+		expect(list?.classList.contains('ingredients')).toBe(true);
+	});
+
 	it('offers an "Adapt this dish" link to /adapt/<id>', () => {
 		const { getByRole } = render(DishDetailPage, { props: { data: { dish } } as never });
 

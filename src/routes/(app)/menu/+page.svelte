@@ -30,10 +30,18 @@
 		display: block;
 		color: inherit;
 		text-decoration: none;
+		transition:
+			transform 0.15s ease,
+			border-color 0.15s ease;
+	}
+
+	.dish-card:hover {
+		transform: translateY(-3px);
+		border-color: var(--aqua);
 	}
 
 	.dish-card h2 {
 		margin: 0.25rem 0 0.5rem;
-		color: var(--tomato);
+		color: var(--berry);
 	}
 </style>

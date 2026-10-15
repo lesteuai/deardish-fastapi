@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render } from '@testing-library/svelte';
 
 vi.mock('$app/navigation', () => ({ goto: vi.fn() }));
@@ -12,6 +12,33 @@ const dish = {
 	description: 'Sweet and savory roasted salmon.',
 	ingredients: ['salmon', 'miso', 'mirin']
 };
+
+function streamingResponse(chunks: string[]) {
+	const encoder = new TextEncoder();
+	let index = 0;
+	return {
+		ok: true,
+		status: 200,
+		body: {
+			getReader() {
+				return {
+					read() {
+						if (index < chunks.length) {
+							const value = encoder.encode(chunks[index]);
+							index += 1;
+							return Promise.resolve({ done: false, value });
+						}
+						return Promise.resolve({ done: true, value: undefined });
+					}
+				};
+			}
+		}
+	};
+}
+
+afterEach(() => {
+	vi.unstubAllGlobals();
+});
 
 describe('adapt page', () => {
 	it('renders the dish name and cuisine', () => {
@@ -40,5 +67,21 @@ describe('adapt page', () => {
 
 		const adapt = getByRole('button', { name: 'Adapt this dish' }) as HTMLButtonElement;
 		expect(adapt.disabled).toBe(false);
+	});
+
+	it('renders the adapted recipe heading inside a recipe-card container', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async () => streamingResponse(['Adapted recipe body']))
+		);
+
+		const { getByRole, findByRole } = render(AdaptPage, {
+			props: { data: { dish } } as never
+		});
+
+		getByRole('button', { name: 'Adapt this dish' }).click();
+
+		const heading = await findByRole('heading', { name: 'Your adapted recipe' });
+		expect(heading.closest('.recipe-card')).not.toBeNull();
 	});
 });

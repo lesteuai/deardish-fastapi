@@ -62,6 +62,15 @@ describe('menu list page', () => {
 		}
 	});
 
+	it('renders each dish card with the dish-card class', () => {
+		const { getByRole } = render(MenuPage, { props: { data: { dishes } } as never });
+
+		for (const dish of dishes) {
+			const card = getByRole('link', { name: new RegExp(dish.name) });
+			expect(card.classList.contains('dish-card')).toBe(true);
+		}
+	});
+
 	it('renders the heading and no dish cards when there are no dishes', () => {
 		const { getByRole, queryAllByRole } = render(MenuPage, {
 			props: { data: { dishes: [] } } as never

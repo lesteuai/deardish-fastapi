@@ -13,7 +13,7 @@
 		<p>{data.dish.description}</p>
 
 		<h2>Ingredients</h2>
-		<ul>
+		<ul class="ingredients">
 			{#each data.dish.ingredients as ingredient (ingredient)}
 				<li>{ingredient}</li>
 			{/each}
@@ -27,6 +27,29 @@
 	.back {
 		display: inline-block;
 		margin-bottom: 1rem;
+		padding: 0.35rem 0.9rem;
+		border: 2px solid var(--berry);
+		border-radius: var(--radius-pill);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.ingredients {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		list-style: none;
+		padding: 0;
+		margin: 0.75rem 0 1.25rem;
+	}
+
+	.ingredients li {
+		background: var(--sun-soft);
+		border: 1px solid var(--sun);
+		border-radius: var(--radius-pill);
+		padding: 0.25rem 0.75rem;
+		font-weight: 600;
+		font-size: 0.9rem;
 	}
 
 	article h1 {
