@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 	import Button from '$lib/ui/Button.svelte';
 	import type { PageData } from './$types';
 
@@ -116,7 +117,9 @@
 	{#if content}
 		<article class="card recipe-card">
 			<h2>Your adapted recipe</h2>
-			<pre class="recipe">{content}</pre>
+			<div class="recipe">
+				<SvelteMarkdown source={content} streaming />
+			</div>
 		</article>
 	{/if}
 
@@ -152,11 +155,48 @@
 		margin: 0.25rem 0 0.5rem;
 	}
 
+	/* SvelteMarkdown renders its own child components, so scoped selectors
+	   cannot reach them; :global targets the markdown output inside .recipe. */
 	.recipe {
-		white-space: pre-wrap;
 		word-break: break-word;
-		margin: 0;
-		font-family: inherit;
+	}
+
+	/* Long recipe headings would otherwise size like page headings. */
+	.recipe :global(h1),
+	.recipe :global(h2),
+	.recipe :global(h3) {
+		margin: 1.25rem 0 0.5rem;
+		color: var(--leaf-dark);
+	}
+
+	/* Drop the leading gap when the recipe opens with a heading. */
+	.recipe :global(h1:first-child),
+	.recipe :global(h2:first-child),
+	.recipe :global(h3:first-child) {
+		margin-top: 0;
+	}
+
+	.recipe :global(p) {
+		margin: 0 0 0.75rem;
+	}
+
+	/* Keep steps and ingredient lists tight and clearly indented. */
+	.recipe :global(ul),
+	.recipe :global(ol) {
+		margin: 0 0 0.75rem;
+		padding-left: 1.25rem;
+	}
+
+	.recipe :global(li) {
+		margin-bottom: 0.25rem;
+	}
+
+	/* Inline code chips read against the soft green recipe card. */
+	.recipe :global(code) {
+		padding: 0.1rem 0.35rem;
+		border-radius: 6px;
+		background: var(--cream);
+		font-size: 0.95em;
 	}
 
 	.save {
