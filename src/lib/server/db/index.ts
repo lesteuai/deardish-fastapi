@@ -6,7 +6,6 @@ import * as schema from './schema';
 export function buildDatabaseUrl() {
 	const envImport = !process.env.PGUSER ? env : process.env;
 	const { PGUSER, PGPASSWORD, PGHOST, PGDATABASE } = envImport;
-	console.log(PGUSER, PGPASSWORD, PGHOST, PGDATABASE)
 	return `postgres://${PGUSER}:${encodeURIComponent(PGPASSWORD ?? '')}@${PGHOST}/${PGDATABASE}`;
 }
 

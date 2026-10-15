@@ -9,8 +9,8 @@
 <header class="site-header">
 	<a class="brand" href="/">DearDish</a>
 	<nav>
-		<a href="/menu">Menu</a>
 		{#if data.user}
+			<a href="/menu">Menu</a>
 			<a href="/meals">My Meals</a>
 			<a href="/profile">Profile</a>
 			<span class="muted">{data.user.email}</span>
@@ -19,7 +19,6 @@
 			</form>
 		{:else}
 			<a href="/auth/login">Sign in</a>
-			<a href="/auth/register">Register</a>
 		{/if}
 	</nav>
 </header>
