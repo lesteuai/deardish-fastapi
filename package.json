@@ -1,0 +1,48 @@
+{
+	"name": "deardish",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "node --env-file=.env build/index.js",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"lint": "eslint .",
+		"test": "vitest run"
+	},
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@sveltejs/adapter-node": "^5.5.7",
+		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@testing-library/svelte": "^5.4.2",
+		"@types/node": "^26.6.5",
+		"drizzle-kit": "^0.31.11",
+		"eslint": "^10.12.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.23.1",
+		"globals": "^17.13.0",
+		"jsdom": "^30.1.2",
+		"prettier": "^3.9.10",
+		"prettier-plugin-svelte": "^4.1.1",
+		"svelte": "^5.57.2",
+		"svelte-check": "^4.7.6",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.71.2",
+		"vite": "^8.3.4",
+		"vitest": "^5.0.4"
+	},
+	"dependencies": {
+		"@openrouter/ai-sdk-provider": "^3.1.0",
+		"ai": "^7.0.140",
+		"drizzle-orm": "^0.45.4",
+		"postgres": "^3.4.9",
+		"zod": "^4.6.7"
+	}
+}
