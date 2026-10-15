@@ -44,7 +44,7 @@
 	},
 	"dependencies": {
 		"@openrouter/ai-sdk-provider": "^3.1.0",
-		"@sveltejs/adapter-vercel": "^7.0.1",
+		"@sveltejs/adapter-vercel": "^6.3.4",
 		"ai": "^7.0.140",
 		"drizzle-orm": "^0.45.4",
 		"postgres": "^3.4.9",
