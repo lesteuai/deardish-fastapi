@@ -1,9 +1,12 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
+import { env } from '$env/dynamic/private';
 import postgres from 'postgres';
 import * as schema from './schema';
 
 export function buildDatabaseUrl() {
-	const { PGUSER, PGPASSWORD, PGHOST, PGDATABASE } = process.env;
+	const envImport = !process.env.PGUSER ? env : process.env;
+	const { PGUSER, PGPASSWORD, PGHOST, PGDATABASE } = envImport;
+	console.log(PGUSER, PGPASSWORD, PGHOST, PGDATABASE)
 	return `postgres://${PGUSER}:${encodeURIComponent(PGPASSWORD ?? '')}@${PGHOST}/${PGDATABASE}`;
 }
 

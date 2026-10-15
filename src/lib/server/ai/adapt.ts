@@ -1,6 +1,7 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createTextStreamResponse, streamText } from 'ai';
 import { buildAdaptPrompt, type Dish, type HealthProfile } from './prompt';
+import { env } from '$env/dynamic/private';
 
 const UNAVAILABLE_MESSAGE = 'The AI service is unavailable right now. Please try again shortly.';
 const MISSING_CONFIG_MESSAGE = 'The AI service is not configured.';
@@ -16,8 +17,8 @@ export async function createAdaptationResponse(
 	dish: Dish,
 	profile: HealthProfile
 ): Promise<Response> {
-	const apiKey = process.env.AI_API_KEY;
-	const model = process.env.AI_MODEL;
+	const apiKey = env.AI_API_KEY;
+	const model = env.AI_MODEL;
 	if (!apiKey || !model) {
 		return errorResponse(MISSING_CONFIG_MESSAGE);
 	}
