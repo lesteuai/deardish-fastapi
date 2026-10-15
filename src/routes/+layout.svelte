@@ -7,7 +7,7 @@
 </script>
 
 <header class="site-header">
-	<a class="brand" href="/">DearDish</a>
+	<a class="brand" href={data.user ? '/menu' : '/'}>DearDish</a>
 	<nav>
 		{#if data.user}
 			<a href="/menu">Menu</a>

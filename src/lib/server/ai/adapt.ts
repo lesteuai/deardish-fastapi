@@ -56,13 +56,18 @@ export async function createAdaptationResponse(
 		},
 		async pull(controller) {
 			try {
-				const { done, value } = await reader.read();
-				if (done) {
-					controller.close();
-					return;
+				for (;;) {
+					const { done, value } = await reader.read();
+					if (done) {
+						controller.close();
+						return;
+					}
+					if (value.type === 'error') throw value.error;
+					if (value.type === 'text-delta') {
+						controller.enqueue(value.text);
+						return;
+					}
 				}
-				if (value.type === 'error') throw value.error;
-				if (value.type === 'text-delta') controller.enqueue(value.text);
 			} catch (error) {
 				controller.error(error);
 			}
