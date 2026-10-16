@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import { isPostHogReady } from '../../../hooks.client';
 	import Button from '$lib/ui/Button.svelte';
+	import posthog from 'posthog-js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -30,6 +32,9 @@
 			if (response.status !== 204) {
 				error = 'Could not delete this meal. Please try again.';
 				return;
+			}
+			if (isPostHogReady()) {
+				posthog.capture('meal_deleted');
 			}
 			await invalidateAll();
 		} catch {

@@ -2,11 +2,29 @@
 	import '../app.css';
 	import Button from '$lib/ui/Button.svelte';
 	import Dropdown from '$lib/ui/Dropdown.svelte';
+	import { isPostHogReady } from '../hooks.client';
+	import posthog from 'posthog-js';
+	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 	let menuOpen = $state(false);
+
+	onMount(() => {
+		if (!data.user || !isPostHogReady()) return;
+
+		const identifiedUserId = posthog.get_property('$user_id');
+		if (typeof identifiedUserId === 'string' && identifiedUserId !== data.user.id) {
+			posthog.reset();
+		}
+
+		posthog.identify(data.user.id, { email: data.user.email });
+	});
+
+	function handleLogout() {
+		if (isPostHogReady()) posthog.reset();
+	}
 </script>
 
 <header class="site-header">
@@ -27,7 +45,7 @@
 					onclick={() => (menuOpen = false)}
 				>Feedback</a>
 				<span class="nav-email muted">{data.user.email}</span>
-				<form method="POST" action="/auth/logout">
+				<form method="POST" action="/auth/logout" onsubmit={handleLogout}>
 					<Button type="submit">Log out</Button>
 				</form>
 			</Dropdown>

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { isPostHogReady } from '../../../../hooks.client';
 	import Button from '$lib/ui/Button.svelte';
+	import posthog from 'posthog-js';
 	import RecipeCard from '$lib/ui/RecipeCard.svelte';
 	import type { PageData } from './$types';
 
@@ -34,6 +36,10 @@
 	}
 
 	async function handleAdapt() {
+		if (isPostHogReady()) {
+			posthog.capture('dish_adaptation_started', { cuisine: data.dish.cuisine });
+		}
+
 		status = 'streaming';
 		content = '';
 		errorMessage = '';
@@ -67,6 +73,9 @@
 			}
 			content += decoder.decode();
 			status = 'complete';
+			if (isPostHogReady()) {
+				posthog.capture('dish_adaptation_completed', { cuisine: data.dish.cuisine });
+			}
 		} catch {
 			status = 'idle';
 			errorMessage = 'The recipe stream was interrupted. Please try again.';
@@ -83,6 +92,9 @@
 				body: JSON.stringify({ title, content, sourceDishId: data.dish.id })
 			});
 			if (response.status === 201) {
+				if (isPostHogReady()) {
+					posthog.capture('meal_saved', { source: 'dish_adaptation' });
+				}
 				await goto('/meals');
 				return;
 			}
