@@ -4,7 +4,10 @@
 	import Dropdown from '$lib/ui/Dropdown.svelte';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 
+	injectAnalytics({ mode: dev ? 'development' : 'production' })
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 	let menuOpen = $state(false);
 </script>
