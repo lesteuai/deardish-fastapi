@@ -1,8 +1,7 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createTextStreamResponse, streamText } from 'ai';
-import { env } from '$env/dynamic/private';
-import { logDishAdaptation } from '$lib/server/posthog-logs';
 import { buildAdaptPrompt, type Dish, type HealthProfile } from './prompt';
+import { env } from '$env/dynamic/private';
 
 const UNAVAILABLE_MESSAGE = 'The AI service is unavailable right now. Please try again shortly.';
 const MISSING_CONFIG_MESSAGE = 'The AI service is not configured.';
@@ -21,11 +20,9 @@ export async function createAdaptationResponse(
 	const apiKey = env.AI_API_KEY;
 	const model = env.AI_MODEL;
 	if (!apiKey || !model) {
-		await logDishAdaptation('configuration_missing', 'WARN');
 		return errorResponse(MISSING_CONFIG_MESSAGE);
 	}
 
-	await logDishAdaptation('generation_started', 'INFO');
 	const openrouter = createOpenRouter({ apiKey });
 	const result = streamText({
 		model: openrouter.chat(model),
@@ -33,9 +30,6 @@ export async function createAdaptationResponse(
 	});
 
 	const reader = result.stream.getReader();
-	const releaseAIStream = async (reason?: unknown) => {
-		await reader.cancel(reason).catch(() => {});
-	};
 	let firstChunk: string | null = null;
 
 	try {
@@ -46,14 +40,12 @@ export async function createAdaptationResponse(
 			if (value.type === 'text-delta') firstChunk = value.text;
 		}
 	} catch {
-		await releaseAIStream();
-		await logDishAdaptation('generation_failed', 'ERROR');
+		await reader.cancel().catch(() => {});
 		return errorResponse(UNAVAILABLE_MESSAGE);
 	}
 
 	if (firstChunk === null) {
-		await releaseAIStream();
-		await logDishAdaptation('generation_failed', 'WARN');
+		await reader.cancel().catch(() => {});
 		return errorResponse(UNAVAILABLE_MESSAGE);
 	}
 
@@ -67,7 +59,6 @@ export async function createAdaptationResponse(
 				for (;;) {
 					const { done, value } = await reader.read();
 					if (done) {
-						await logDishAdaptation('generation_completed', 'INFO');
 						controller.close();
 						return;
 					}
@@ -78,12 +69,11 @@ export async function createAdaptationResponse(
 					}
 				}
 			} catch (error) {
-				await logDishAdaptation('generation_failed', 'ERROR');
 				controller.error(error);
 			}
 		},
-		async cancel(reason) {
-			await releaseAIStream(reason);
+		cancel(reason) {
+			return reader.cancel(reason);
 		}
 	});
 
