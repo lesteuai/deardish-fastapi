@@ -12,5 +12,6 @@ Index of agent documentation for DearDish.
   - `TASKS.md` - task waves T1 to T3, all complete.
   - `REPORT.md` - what was built, the color/typography system, files touched, verification.
   - `preview.html` - standalone static preview of the theme palette and components.
+- `research/deardish-ai-recipe-opportunities-2026-10-18.md` - competitor scan, user-demand evidence, and three feature opportunities for differentiating DearDish.
 
 The agent-facing dev guide for this repo is `AGENTS.md` at the repo root (commands, architecture map, conventions, data model, env vars).
