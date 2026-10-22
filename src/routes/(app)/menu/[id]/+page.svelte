@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/ui/Button.svelte';
 	import type { PageData } from './$types';
 
@@ -6,7 +7,7 @@
 </script>
 
 <section>
-	<a class="back" href="/menu">Back to menu</a>
+	<Button class="back" onclick={() => goto('/menu')}>Back to menu</Button>
 
 	<article class="card">
 		<span class="cuisine">{data.dish.cuisine}</span>
@@ -25,16 +26,6 @@
 </section>
 
 <style>
-	.back {
-		display: inline-block;
-		margin-bottom: 1rem;
-		padding: 0.35rem 0.9rem;
-		border: 2px solid var(--berry);
-		border-radius: var(--radius-pill);
-		text-decoration: none;
-		font-weight: 600;
-	}
-
 	.ingredients {
 		display: flex;
 		flex-wrap: wrap;

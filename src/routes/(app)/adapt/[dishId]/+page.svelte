@@ -96,7 +96,7 @@
 </script>
 
 <section>
-	<a class="back" href={`/menu/${data.dish.id}`}>Back to dish</a>
+	<Button class="back" onclick={() => goto(`/menu/${data.dish.id}`)}>Back to dish</Button>
 
 	<article class="card">
 		<span class="cuisine">{data.dish.cuisine}</span>
@@ -127,16 +127,6 @@
 </section>
 
 <style>
-	.back {
-		display: inline-block;
-		margin-bottom: 1rem;
-		padding: 0.35rem 0.9rem;
-		border: 2px solid var(--berry);
-		border-radius: var(--radius-pill);
-		text-decoration: none;
-		font-weight: 600;
-	}
-
 	article h1 {
 		margin: 0.25rem 0 0.5rem;
 	}
