@@ -23,12 +23,12 @@
 		</ul>
 
 		<Button href={`/adapt/${data.dish.id}`} variant="primary">Adapt this dish</Button>
-		{#if data.dish.content}
-			<div class="original-recipe">
-				<RecipeCard content={data.dish.content} title="Original recipe" />
-			</div>
-		{/if}
 	</article>
+	{#if data.dish.content}
+		<div class="original-recipe">
+			<RecipeCard content={data.dish.content} title="Original recipe" />
+		</div>
+	{/if}
 </section>
 
 <style>

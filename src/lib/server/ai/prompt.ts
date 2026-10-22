@@ -3,6 +3,7 @@ export type Dish = {
 	cuisine: string;
 	description: string;
 	ingredients: string[];
+	content: string;
 };
 
 export type HealthProfile = {
@@ -20,10 +21,9 @@ const SYSTEM_PROMPT = [
 		'2. Recipe details: servings, prep time, and cook time. If a value is uncertain, give a reasonable estimate.',
 		'3. Ingredients: list quantities and ingredients in the order used. Name substitutions clearly beside the adapted ingredient.',
 		'4. Instructions: provide concise numbered cooking steps with temperatures, timings, and doneness cues where useful.',
-		'5. Changes from the original: list each ingredient or preparation change, stating what was replaced, added, removed, or modified and the reason. Mention only changes that were actually made. If nothing changed, say so.',
-		'Base this comparison on the supplied dish name, description, and ingredients. Do not imply that the original included quantities or preparation details that were not provided.',
-		'Keep the dish recognizable and flavorful.'
-	].join(' ')
+		'5. Changes from the original: list each ingredient or preparation change, stating what was replaced, added, removed, or modified and the reason. Mention only changes that were actually made. If nothing changed, say so. Base this comparison on the supplied dish name, description, and ingredients. Do not imply that the original included quantities or preparation details that were not provided. Keep the dish recognizable and flavorful.',
+		'Bolden any changes from the original recipe.'
+	].join('\n')
 ].join('\n\n');
 
 export const ORIGINAL_RECIPE_FORMAT_PROMPT = [
@@ -67,7 +67,8 @@ export function buildAdaptUserPrompt(dish: Dish, profile: HealthProfile): string
 		`Name: ${dish.name}`,
 		`Cuisine: ${dish.cuisine}`,
 		`Description: ${dish.description}`,
-		`Ingredients: ${dish.ingredients.join(', ')}`
+		`Ingredients: ${dish.ingredients.join(', ')}`,
+		`Content: ${dish.content}`,
 	].join('\n');
 
 	const profileLines = [
@@ -81,6 +82,6 @@ export function buildAdaptUserPrompt(dish: Dish, profile: HealthProfile): string
 		profileLines.length > 0
 			? ['Health profile:', ...profileLines].join('\n')
 			: ['Health profile:', EMPTY_PROFILE_FALLBACK].join('\n');
-
+	
 	return [dishSection, profileSection].join('\n\n');
 }
