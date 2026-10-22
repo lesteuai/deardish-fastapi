@@ -17,9 +17,9 @@
 		<img class="brand-logo" src="/deardish.jpg" alt="" />
 		<span>DearDish</span>
 	</a>
-	<nav>
 		{#if data.user}
-			<Dropdown bind:open={menuOpen}>
+			<nav>
+				<Dropdown bind:open={menuOpen}>
 				<a href="/menu" onclick={() => (menuOpen = false)}>Menu</a>
 				<a href="/meals" onclick={() => (menuOpen = false)}>My Meals</a>
 				<a href="/profile" onclick={() => (menuOpen = false)}>Profile</a>
@@ -31,12 +31,10 @@
 				>Feedback</a>
 				<form method="POST" action="/auth/logout">
 					<Button type="submit">Log out</Button>
-				</form>
-			</Dropdown>
-		{:else}
-			<a href="/auth/login">Sign in</a>
+					</form>
+				</Dropdown>
+			</nav>
 		{/if}
-	</nav>
 </header>
 
 <main>

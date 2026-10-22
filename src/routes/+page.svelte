@@ -7,8 +7,7 @@
 	<h1>DearDish</h1>
 	<p class="mission">DearDish makes restaurant-style meals accessible to people facing health challenges.</p>
 	<div class="actions">
-		<Button href="/auth/register" variant="primary">Register</Button>
-		<Button href="/auth/login">Sign in</Button>
+		<Button href="/auth/login" variant="primary" class="home-sign-in">Sign in</Button>
 	</div>
 	<a
 		class="feedback-link"
@@ -19,6 +18,10 @@
 </section>
 
 <style>
+	.hero :global(.home-sign-in) {
+		width: 12rem;
+	}
+
 	.feedback-link {
 		margin-top: 1rem;
 		display: inline-block;

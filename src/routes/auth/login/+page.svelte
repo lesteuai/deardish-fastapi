@@ -29,13 +29,12 @@
 		<input id="password" name="password" type="password" autocomplete="current-password" />
 		{#if form?.errors?.password}
 			<p class="error">{form.errors.password}</p>
-		{/if}
+			{/if}
 
-		<Button type="submit" variant="primary">Sign in</Button>
-	</form>
-
-	<p class="muted">New to DearDish? <a href="/auth/register">Create an account</a></p>
-</section>
+			<Button type="submit" variant="primary">Sign in</Button>
+			<Button href="/auth/register" class="create-account">Create an account</Button>
+		</form>
+	</section>
 
 <style>
 	.auth {
@@ -48,5 +47,10 @@
 	.auth h1 {
 		color: var(--berry);
 		margin-top: 0;
+	}
+
+	.auth :global(.create-account) {
+		background: #fff;
+		text-align: center;
 	}
 </style>
