@@ -1,10 +1,20 @@
 import { inArray } from 'drizzle-orm';
-import { db } from '../src/lib/server/db';
-import { dishes } from '../src/lib/server/db/schema';
+import { db } from '../../src/lib/server/db';
+import { dishes, images } from '../../src/lib/server/db/schema';
+
+export const seedImages = [
+	{ id: '10000000-0000-4000-8000-000000000001', location: '/assets/dishes/tuscan-ribollita.jpg', type: 'file' },
+	{ id: '10000000-0000-4000-8000-000000000002', location: '/assets/dishes/coq-au-vin.jpg', type: 'file' },
+	{ id: '10000000-0000-4000-8000-000000000003', location: '/assets/dishes/miso-glazed-salmon.jpg', type: 'file' },
+	{ id: '10000000-0000-4000-8000-000000000004', location: '/assets/dishes/chana-masala.jpg', type: 'file' },
+	{ id: '10000000-0000-4000-8000-000000000005', location: '/assets/dishes/baja-fish-tacos.jpg', type: 'file' },
+	{ id: '10000000-0000-4000-8000-000000000006', location: '/assets/dishes/thai-green-curry.jpg', type: 'file' }
+];
 
 export const seedDishes = [
 	{
 		name: 'Tuscan Ribollita',
+		imageId: seedImages[0].id,
 		cuisine: 'Italian',
 		description:
 			'A hearty Tuscan bread and bean stew simmered with kale and tomatoes, finished with a swirl of olive oil.',
@@ -23,6 +33,7 @@ export const seedDishes = [
 	},
 	{
 		name: 'Coq au Vin',
+		imageId: seedImages[1].id,
 		cuisine: 'French',
 		description:
 			'Chicken braised low and slow in red wine with bacon lardons, mushrooms, and pearl onions.',
@@ -41,6 +52,7 @@ export const seedDishes = [
 	},
 	{
 		name: 'Miso Glazed Salmon',
+		imageId: seedImages[2].id,
 		cuisine: 'Japanese',
 		description:
 			'Salmon fillets glazed with sweet white miso and mirin, roasted until caramelized and served over rice.',
@@ -57,6 +69,7 @@ export const seedDishes = [
 	},
 	{
 		name: 'Chana Masala',
+		imageId: seedImages[3].id,
 		cuisine: 'Indian',
 		description:
 			'Tender chickpeas in a spiced tomato and onion masala, brightened with garam masala and fresh cilantro.',
@@ -75,6 +88,7 @@ export const seedDishes = [
 	},
 	{
 		name: 'Baja Fish Tacos',
+		imageId: seedImages[4].id,
 		cuisine: 'Mexican',
 		description:
 			'Lightly spiced grilled fish tucked into warm corn tortillas with cabbage slaw and chipotle crema.',
@@ -93,6 +107,7 @@ export const seedDishes = [
 	},
 	{
 		name: 'Thai Green Curry',
+		imageId: seedImages[5].id,
 		cuisine: 'Thai',
 		description:
 			'A fragrant coconut curry with chicken, bamboo shoots, and Thai basil, balanced with fish sauce and lime.',
@@ -113,6 +128,10 @@ export const seedDishes = [
 export async function seed() {
 	const names = seedDishes.map((dish) => dish.name);
 	await db.delete(dishes).where(inArray(dishes.name, names));
+	await db
+		.insert(images)
+		.values(seedImages)
+		.onConflictDoNothing({ target: images.id });
 	await db.insert(dishes).values(seedDishes);
 }
 

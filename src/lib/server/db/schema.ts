@@ -1,5 +1,11 @@
 import { jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
+export const images = pgTable('images', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	location: text('location').notNull().unique(),
+	type: text('type').notNull()
+});
+
 export const users = pgTable('users', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	email: text('email').notNull().unique(),
@@ -31,7 +37,8 @@ export const dishes = pgTable('dishes', {
 	name: text('name').notNull(),
 	cuisine: text('cuisine').notNull(),
 	description: text('description').notNull(),
-	ingredients: jsonb('ingredients').$type<string[]>().notNull()
+	ingredients: jsonb('ingredients').$type<string[]>().notNull(),
+	imageId: uuid('image_id').references(() => images.id, { onDelete: 'set null' })
 });
 
 export const meals = pgTable('meals', {

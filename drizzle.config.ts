@@ -1,9 +1,11 @@
 import { defineConfig } from 'drizzle-kit';
-import { buildDatabaseUrl } from './src/lib/server/db';
+
+const { PGUSER, PGPASSWORD, PGHOST, PGDATABASE } = process.env;
+const databaseUrl = `postgres://${PGUSER}:${encodeURIComponent(PGPASSWORD ?? '')}@${PGHOST}/${PGDATABASE}`;
 
 export default defineConfig({
 	dialect: 'postgresql',
 	schema: './src/lib/server/db/schema.ts',
 	out: './drizzle',
-	dbCredentials: { url: `${buildDatabaseUrl()}?sslmode=require` }
+	dbCredentials: { url: `${databaseUrl}?sslmode=require` }
 });

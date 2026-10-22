@@ -13,7 +13,7 @@ vi.mock('../../../../src/lib/server/db/schema', () => ({
 	dishes: { name: { name: 'name' } }
 }));
 
-import { seedDishes } from '../../../../scripts/seed';
+import { seedDishes } from '../../../../scripts/ts/seed';
 
 describe('seed dish fixtures', () => {
 	it('exports exactly 6 dishes', () => {

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import dishImages from '$lib/data/dish-images.json';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -14,7 +13,7 @@
 			<a class="card dish-card" href={`/menu/${dish.id}`}>
 				<img
 					class="dish-image"
-					src={dishImages[dish.name as keyof typeof dishImages].src}
+					src={dish.image ?? ''}
 					alt={dish.name}
 				/>
 				<span class="cuisine">{dish.cuisine}</span>

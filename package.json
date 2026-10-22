@@ -14,7 +14,7 @@
 		"test": "vitest run",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:seed": "bun run scripts/seed.ts"
+		"db:seed": "bun run scripts/ts/seed.ts"
 	},
 	"imports": {
 		"#lib": "./src/lib/index.js",
