@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/ui/Button.svelte';
 	import type { ActionData } from './$types';
 
@@ -32,7 +33,7 @@
 			{/if}
 
 			<Button type="submit" variant="primary">Sign in</Button>
-			<Button href="/auth/register" class="create-account">Create an account</Button>
+			<Button onclick={() => goto('/auth/register')} class="create-account">Create an account</Button>
 		</form>
 	</section>
 
