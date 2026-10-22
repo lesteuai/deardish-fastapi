@@ -15,6 +15,13 @@
       "when": 1792649348265,
       "tag": "0001_brief_pride",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792651239274,
+      "tag": "0002_spicy_black_knight",
+      "breakpoints": true
     }
   ]
 }

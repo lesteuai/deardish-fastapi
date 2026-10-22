@@ -19,6 +19,7 @@ type Dish = {
 	name: string;
 	cuisine: string;
 	description: string;
+	content: string;
 	ingredients: string[];
 };
 
@@ -27,6 +28,7 @@ const dish: Dish = {
 	name: 'Paneer Butter Masala',
 	cuisine: 'Indian',
 	description: 'A creamy tomato curry with cubes of paneer.',
+	content: '## Paneer Butter Masala Recipe\n\nCook the paneer in tomato sauce.',
 	ingredients: ['paneer', 'tomatoes', 'cream', 'butter', 'garam masala']
 };
 
@@ -67,6 +69,15 @@ describe('dish detail page', () => {
 		for (const ingredient of dish.ingredients) {
 			expect(getByText(ingredient)).toBeTruthy();
 		}
+	});
+
+	it('renders the original recipe beneath the dish description', () => {
+		const { getByRole, getByText } = render(DishDetailPage, {
+			props: { data: { dish } } as never
+		});
+
+		expect(getByRole('heading', { name: 'Original recipe' })).toBeTruthy();
+		expect(getByText('Cook the paneer in tomato sauce.')).toBeTruthy();
 	});
 
 	it('renders the ingredients as a list carrying the ingredients class', () => {

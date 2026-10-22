@@ -12,11 +12,37 @@ export type HealthProfile = {
 	notes: string;
 };
 
-const CONTEXT =
-	'You are DearDish, an assistant that adapts restaurant-style dishes for people with health needs.';
+const SYSTEM_PROMPT = [
+	'You are DearDish, an assistant that adapts restaurant-style dishes for people with health needs.',
+	[
+		"Rewrite the provided dish as a complete, cookable recipe that respects the diner's health profile. Format the response in Markdown with these sections, in this order:",
+		'1. Recipe title and a one-sentence description.',
+		'2. Recipe details: servings, prep time, and cook time. If a value is uncertain, give a reasonable estimate.',
+		'3. Ingredients: list quantities and ingredients in the order used. Name substitutions clearly beside the adapted ingredient.',
+		'4. Instructions: provide concise numbered cooking steps with temperatures, timings, and doneness cues where useful.',
+		'5. Changes from the original: list each ingredient or preparation change, stating what was replaced, added, removed, or modified and the reason. Mention only changes that were actually made. If nothing changed, say so.',
+		'Base this comparison on the supplied dish name, description, and ingredients. Do not imply that the original included quantities or preparation details that were not provided.',
+		'Keep the dish recognizable and flavorful.'
+	].join(' ')
+].join('\n\n');
 
-const REQUEST =
-	"Rewrite the dish below as a complete, cookable recipe that respects the diner's health profile. Return a title, an ingredient list that notes every substitution, and numbered cooking steps.";
+export const ORIGINAL_RECIPE_FORMAT_PROMPT = [
+	'Format the supplied source recipe as the dish’s original recipe. Preserve the source recipe and do not adapt it to a health profile or change its ingredients or cooking method.',
+	'Return only Markdown using this structure:',
+	'## {Recipe name}',
+	'',
+	'**Serves {yield} | Prep {prep time} | Cook {cook time}**',
+	'',
+	'### Ingredients',
+	'- List ingredients with source quantities, in the order used.',
+	'',
+	'### Method',
+	'1. Present the original method as concise, numbered, cookable steps. Preserve temperatures, timings, and doneness cues from the source.',
+	'',
+	'Recipe reference: {source URL}',
+	'',
+	'Use metadata only when it is provided by the source; write “Not specified” for missing yield or times instead of guessing. Do not invent ingredient amounts, steps, temperatures, timings, or a source URL. Keep essential recipe details intact while paraphrasing instructions instead of copying source wording verbatim.'
+].join('\n');
 
 const EMPTY_PROFILE_FALLBACK = [
 	'No health profile was provided, so apply general healthy-cooking guidance:',
@@ -31,7 +57,11 @@ function labelledLine(label: string, value: string): string | null {
 	return trimmed.length > 0 ? `${label}: ${trimmed}` : null;
 }
 
-export function buildAdaptPrompt(dish: Dish, profile: HealthProfile): string {
+export function buildAdaptSystemPrompt(): string {
+	return SYSTEM_PROMPT;
+}
+
+export function buildAdaptUserPrompt(dish: Dish, profile: HealthProfile): string {
 	const dishSection = [
 		'Dish:',
 		`Name: ${dish.name}`,
@@ -52,5 +82,5 @@ export function buildAdaptPrompt(dish: Dish, profile: HealthProfile): string {
 			? ['Health profile:', ...profileLines].join('\n')
 			: ['Health profile:', EMPTY_PROFILE_FALLBACK].join('\n');
 
-	return [CONTEXT, REQUEST, dishSection, profileSection].join('\n\n');
+	return [dishSection, profileSection].join('\n\n');
 }

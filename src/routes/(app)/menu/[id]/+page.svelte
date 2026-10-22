@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Button from '$lib/ui/Button.svelte';
+	import RecipeCard from '$lib/ui/RecipeCard.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -22,6 +23,11 @@
 		</ul>
 
 		<Button href={`/adapt/${data.dish.id}`} variant="primary">Adapt this dish</Button>
+		{#if data.dish.content}
+			<div class="original-recipe">
+				<RecipeCard content={data.dish.content} title="Original recipe" />
+			</div>
+		{/if}
 	</article>
 </section>
 
@@ -46,5 +52,9 @@
 
 	article h1 {
 		margin: 0.25rem 0 0.5rem;
+	}
+
+	.original-recipe {
+		margin-top: 1.25rem;
 	}
 </style>

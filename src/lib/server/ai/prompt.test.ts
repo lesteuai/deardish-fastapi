@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildAdaptPrompt, type Dish, type HealthProfile } from './prompt';
+import {
+	buildAdaptSystemPrompt,
+	buildAdaptUserPrompt,
+	type Dish,
+	type HealthProfile
+} from './prompt';
 
 const dish: Dish = {
 	name: 'Paneer Butter Masala',
@@ -15,9 +20,21 @@ const emptyProfile: HealthProfile = {
 	notes: ''
 };
 
-describe('buildAdaptPrompt', () => {
+describe('buildAdaptSystemPrompt', () => {
+	it('provides DearDish recipe adaptation instructions', () => {
+		const prompt = buildAdaptSystemPrompt();
+
+			expect(prompt).toContain('DearDish');
+			expect(prompt).toContain('complete, cookable recipe');
+			expect(prompt).toContain('numbered cooking steps');
+			expect(prompt).toContain('Changes from the original');
+			expect(prompt).toContain('replaced, added, removed, or modified');
+		});
+});
+
+describe('buildAdaptUserPrompt', () => {
 	it('includes the dish name, cuisine, description, and every ingredient', () => {
-		const prompt = buildAdaptPrompt(dish, emptyProfile);
+		const prompt = buildAdaptUserPrompt(dish, emptyProfile);
 
 		expect(prompt).toContain(dish.name);
 		expect(prompt).toContain(dish.cuisine);
@@ -35,7 +52,7 @@ describe('buildAdaptPrompt', () => {
 			notes: 'avoid very spicy food'
 		};
 
-		const prompt = buildAdaptPrompt(dish, profile);
+		const prompt = buildAdaptUserPrompt(dish, profile);
 
 		expect(prompt).toContain('type 2 diabetes');
 		expect(prompt).toContain('peanuts');
@@ -51,7 +68,7 @@ describe('buildAdaptPrompt', () => {
 			notes: ''
 		};
 
-		const prompt = buildAdaptPrompt(dish, profile);
+		const prompt = buildAdaptUserPrompt(dish, profile);
 
 		expect(prompt).toContain('Conditions: hypertension');
 		expect(prompt).not.toContain('Allergies:');
@@ -60,7 +77,7 @@ describe('buildAdaptPrompt', () => {
 	});
 
 	it('falls back to general healthy-cooking guidance when every profile field is empty', () => {
-		const prompt = buildAdaptPrompt(dish, emptyProfile);
+		const prompt = buildAdaptUserPrompt(dish, emptyProfile);
 
 		expect(prompt.toLowerCase()).toContain('healthy');
 		expect(prompt).not.toContain('Conditions:');

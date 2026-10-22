@@ -82,7 +82,7 @@ describe('createAdaptationResponse', () => {
 		expect(body).toContain('Hello ');
 	});
 
-	it('passes the built prompt to the provider', async () => {
+	it('passes separate system instructions and user prompt to the provider', async () => {
 		streamTextMock.mockReturnValue({
 			stream: streamOf([{ type: 'text-delta', id: '1', text: 'ok' }])
 		});
@@ -90,8 +90,13 @@ describe('createAdaptationResponse', () => {
 		await createAdaptationResponse(dish, profile);
 
 		expect(streamTextMock).toHaveBeenCalledTimes(1);
-		const args = streamTextMock.mock.calls[0][0] as { prompt?: string };
+		const args = streamTextMock.mock.calls[0][0] as {
+			instructions?: string;
+			prompt?: string;
+		};
+		expect(args.instructions).toContain('DearDish');
 		expect(args.prompt).toContain(dish.name);
+		expect(args.prompt).not.toContain('DearDish');
 	});
 
 	it('returns a 502 JSON error when the provider errors before the first text chunk', async () => {

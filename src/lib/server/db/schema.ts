@@ -37,6 +37,8 @@ export const dishes = pgTable('dishes', {
 	name: text('name').notNull(),
 	cuisine: text('cuisine').notNull(),
 	description: text('description').notNull(),
+	content: text('content').notNull().default(''),
+	lastUpdated: timestamp('last_updated', { withTimezone: true }).notNull().defaultNow(),
 	ingredients: jsonb('ingredients').$type<string[]>().notNull(),
 	imageId: uuid('image_id').references(() => images.id, { onDelete: 'set null' })
 });

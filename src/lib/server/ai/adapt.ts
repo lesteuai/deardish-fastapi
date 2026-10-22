@@ -1,6 +1,11 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createTextStreamResponse, streamText } from 'ai';
-import { buildAdaptPrompt, type Dish, type HealthProfile } from './prompt';
+import {
+	buildAdaptSystemPrompt,
+	buildAdaptUserPrompt,
+	type Dish,
+	type HealthProfile
+} from './prompt';
 import { env } from '$env/dynamic/private';
 
 const UNAVAILABLE_MESSAGE = 'The AI service is unavailable right now. Please try again shortly.';
@@ -26,7 +31,8 @@ export async function createAdaptationResponse(
 	const openrouter = createOpenRouter({ apiKey });
 	const result = streamText({
 		model: openrouter.chat(model),
-		prompt: buildAdaptPrompt(dish, profile)
+		instructions: buildAdaptSystemPrompt(),
+		prompt: buildAdaptUserPrompt(dish, profile)
 	});
 
 	const reader = result.stream.getReader();
