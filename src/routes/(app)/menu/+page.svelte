@@ -1,4 +1,5 @@
 <script lang="ts">
+	import dishImages from '$lib/data/dish-images.json';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -11,6 +12,11 @@
 	<div class="grid">
 		{#each data.dishes as dish (dish.id)}
 			<a class="card dish-card" href={`/menu/${dish.id}`}>
+				<img
+					class="dish-image"
+					src={dishImages[dish.name as keyof typeof dishImages].src}
+					alt={dish.name}
+				/>
 				<span class="cuisine">{dish.cuisine}</span>
 				<h2>{dish.name}</h2>
 				<p>{dish.description}</p>
@@ -33,6 +39,15 @@
 		transition:
 			transform 0.15s ease,
 			border-color 0.15s ease;
+	}
+
+	.dish-image {
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		border-radius: var(--radius, 0.5rem);
+		margin-bottom: 0.9rem;
 	}
 
 	.dish-card:hover {

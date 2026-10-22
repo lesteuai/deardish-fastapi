@@ -29,7 +29,6 @@
 					rel="noopener noreferrer"
 					onclick={() => (menuOpen = false)}
 				>Feedback</a>
-				<span class="nav-email muted">{data.user.email}</span>
 				<form method="POST" action="/auth/logout">
 					<Button type="submit">Log out</Button>
 				</form>
@@ -51,9 +50,4 @@
 		margin: 0;
 	}
 
-	@media (max-width: 640px) {
-		.nav-email {
-			padding: 0.4rem 0.9rem;
-		}
-	}
 </style>

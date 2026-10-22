@@ -16,6 +16,7 @@
 
 <section>
 	<h1>Health profile</h1>
+	<p class="muted account-email">Email: {data.email}</p>
 	<p class="muted">
 		DearDish uses your profile to adapt restaurant-style dishes to your needs. It avoids your
 		allergies, respects your dietary preferences, steers around ingredients that clash with your
@@ -24,6 +25,9 @@
 
 	<div class="card">
 		<form method="POST">
+			{#if form?.saved}
+				<p class="success" role="status" aria-live="polite">Profile saved.</p>
+			{/if}
 			{#if form?.errors?.form}
 				<p class="error">{form.errors.form}</p>
 			{/if}
@@ -65,5 +69,14 @@
 
 	form label {
 		color: var(--leaf-dark);
+	}
+
+	.account-email {
+		margin-top: -0.5rem;
+	}
+
+	.success {
+		color: var(--leaf-dark);
+		font-weight: 700;
 	}
 </style>

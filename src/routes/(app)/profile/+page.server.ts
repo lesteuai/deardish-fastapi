@@ -1,9 +1,9 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { getProfile, saveProfile } from '$lib/server/profile';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	return { profile: await getProfile(locals.user!.id) };
+	return { email: locals.user!.email, profile: await getProfile(locals.user!.id) };
 };
 
 export const actions: Actions = {
@@ -21,6 +21,6 @@ export const actions: Actions = {
 			return fail(400, { errors: result.errors, values });
 		}
 
-		redirect(302, '/profile');
+		return { saved: true, values };
 	}
 };
