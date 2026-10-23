@@ -27,6 +27,16 @@ export default ts.config(
 		}
 	},
 	{
-		ignores: ['build/', '.svelte-kit/', 'node_modules/']
+		ignores: [
+			'build/',
+			'.svelte-kit/',
+			'.vercel/',
+			'node_modules/',
+			'venv/',
+			'.venv/',
+			'backend/.venv/',
+			'backend/venv/',
+			'**/__pycache__/'
+		]
 	}
 );

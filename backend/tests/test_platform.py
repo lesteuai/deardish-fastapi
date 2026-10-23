@@ -28,6 +28,19 @@ def test_build_conninfo_uses_defaults_and_escapes_values() -> None:
     assert "connect_timeout=10" in conninfo
 
 
+def test_build_conninfo_defaults_empty_sslmode_to_require() -> None:
+    conninfo = db.build_conninfo(
+        {
+            "PGHOST": "localhost",
+            "PGUSER": "deardish",
+            "PGDATABASE": "deardish_test",
+            "PGSSLMODE": "",
+        }
+    )
+
+    assert "sslmode=require" in conninfo
+
+
 def test_build_conninfo_requires_database_keys() -> None:
     with pytest.raises(RuntimeError, match="PGHOST, PGUSER, PGDATABASE"):
         db.build_conninfo({})

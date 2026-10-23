@@ -7,18 +7,6 @@ export type HealthProfile = {
 	notes: string;
 };
 
-export type Dish = {
-	name: string;
-	cuisine: string;
-	description: string;
-	ingredients: string[];
-	content?: string;
-	id?: string;
-	imageLocation?: string | null;
-	lastUpdated?: string | Date;
-	imageId?: string | null;
-};
-
 export type DishSummary = {
 	id: string;
 	name: string;

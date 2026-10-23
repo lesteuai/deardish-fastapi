@@ -37,7 +37,7 @@ def build_conninfo(environ: dict[str, str] | None = None) -> str:
         "user": values["PGUSER"],
         "dbname": values["PGDATABASE"],
         "password": values.get("PGPASSWORD", ""),
-        "sslmode": values.get("PGSSLMODE", "require"),
+        "sslmode": values.get("PGSSLMODE") or "require",
         "connect_timeout": 10,
     }
     if values.get("PGPORT"):
