@@ -50,6 +50,7 @@ def test_build_conninfo_accepts_optional_port_and_sslmode() -> None:
 
 def test_import_is_lazy_and_pool_lifecycle_is_bounded(monkeypatch: pytest.MonkeyPatch) -> None:
     created: list[dict[str, object]] = []
+    wrappers: list[FakeEmbarDb] = []
 
     class FakePool:
         def __init__(self, **kwargs: object) -> None:
@@ -67,15 +68,18 @@ def test_import_is_lazy_and_pool_lifecycle_is_bounded(monkeypatch: pytest.Monkey
     class FakeEmbarDb:
         def __init__(self, pool: FakePool) -> None:
             self.pool = pool
+            wrappers.append(self)
 
     async def exercise() -> None:
         await db.close_db()
         monkeypatch.setattr(db, "AsyncConnectionPool", FakePool)
         monkeypatch.setattr(db, "AsyncPgDb", FakeEmbarDb)
         first = cast(FakeEmbarDb, await db.get_db())
-        second = await db.get_db()
+        second = cast(FakeEmbarDb, await db.get_db())
 
-        assert first is second
+        assert first is not second
+        assert wrappers == [first, second]
+        assert first.pool is second.pool
         assert len(created) == 1
         assert created[0]["min_size"] == 0
         assert created[0]["max_size"] == 10
@@ -87,7 +91,6 @@ def test_import_is_lazy_and_pool_lifecycle_is_bounded(monkeypatch: pytest.Monkey
         await db.close_db()
         assert pool.close_count == 1
         assert db._pool is None
-        assert db._db is None
 
     asyncio.run(exercise())
 

@@ -5,11 +5,23 @@ from __future__ import annotations
 import os
 
 from embar.db.pg import AsyncPgDb
+from embar.query.query import QuerySingle
 from psycopg.conninfo import make_conninfo
 from psycopg_pool import AsyncConnectionPool
+from pydantic import BaseModel
 
 _pool: AsyncConnectionPool | None = None
-_db: AsyncPgDb | None = None
+
+
+async def fetch_models[RowModel: BaseModel](
+    db: AsyncPgDb,
+    sql: str,
+    params: dict[str, object],
+    model: type[RowModel],
+) -> list[RowModel]:
+    """Fetch parameterized rows and validate them against their database model."""
+    rows = await db.fetch(QuerySingle(sql, params))
+    return [model.model_validate(row) for row in rows]
 
 
 def build_conninfo(environ: dict[str, str] | None = None) -> str:
@@ -34,9 +46,9 @@ def build_conninfo(environ: dict[str, str] | None = None) -> str:
 
 
 async def get_db() -> AsyncPgDb:
-    """Return the process Embar client, opening its pool only on first use."""
-    global _pool, _db
-    if _db is None:
+    """Return a fresh Embar client backed by the process pool."""
+    global _pool
+    if _pool is None:
         _pool = AsyncConnectionPool(
             conninfo=build_conninfo,
             min_size=0,
@@ -45,18 +57,14 @@ async def get_db() -> AsyncPgDb:
             open=False,
             kwargs={"prepare_threshold": None},
         )
-        _db = AsyncPgDb(_pool)
     pool = _pool
-    if pool is None:
-        raise RuntimeError("Database pool could not be initialized.")
     await pool.open()
-    return _db
+    return AsyncPgDb(pool)
 
 
 async def close_db() -> None:
-    """Close the process pool and reset the lazy client."""
-    global _pool, _db
+    """Close the process pool and reset lazy database access."""
+    global _pool
     if _pool is not None:
         await _pool.close()
     _pool = None
-    _db = None
