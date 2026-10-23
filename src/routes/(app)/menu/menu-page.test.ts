@@ -1,20 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/svelte';
 
-const dbMock = vi.hoisted(() => {
-	const orderBy = vi.fn();
-	const leftJoin = vi.fn(() => ({ orderBy }));
-	const from = vi.fn(() => ({ leftJoin }));
-	const select = vi.fn(() => ({ from }));
-	return { db: { select }, select, from, leftJoin, orderBy };
-});
+const backendMock = vi.hoisted(() => ({
+	backendJson: vi.fn(),
+	throwBackendError: vi.fn((error: unknown): never => {
+		throw error;
+	})
+}));
 
-vi.mock('$lib/server/db', () => ({ db: dbMock.db }));
+vi.mock('$lib/server/backend', () => backendMock);
 
 import MenuPage from './+page.svelte';
 import { load } from './+page.server';
 
-type Dish = { id: string; name: string; cuisine: string; description: string; image: string };
+type Dish = { id: string; name: string; cuisine: string; description: string; image: string | null };
 
 const dishes: Dish[] = [
 	{
@@ -36,11 +35,29 @@ const dishes: Dish[] = [
 		name: 'Tacos al Pastor',
 		cuisine: 'Mexican',
 		description: 'Marinated pork tacos with pineapple and cilantro.',
-		image: '/assets/tacos.jpg'
+		image: null
 	}
 ];
 
-const runLoad = () => (load as unknown as () => Promise<{ dishes: Dish[] }>)();
+const user = { id: 'user-1', email: 'chef@example.com' };
+
+const makeEvent = (authenticated = true) => ({
+	locals: { user: authenticated ? user : null }
+});
+
+const runLoad = (authenticated = true) =>
+	(load as unknown as (event: ReturnType<typeof makeEvent>) => Promise<{ dishes: Dish[] }>)(
+		makeEvent(authenticated)
+	);
+
+async function catchLoad(authenticated = true): Promise<unknown> {
+	try {
+		await runLoad(authenticated);
+		return undefined;
+	} catch (error) {
+		return error;
+	}
+}
 
 beforeEach(() => {
 	vi.clearAllMocks();
@@ -60,9 +77,11 @@ describe('menu list page', () => {
 	it('renders each dish image from its image location', () => {
 		const { getAllByRole } = render(MenuPage, { props: { data: { dishes } } as never });
 
-		expect(getAllByRole('img').map((image) => image.getAttribute('src'))).toEqual(
-			dishes.map((dish) => dish.image)
-		);
+		expect(getAllByRole('img').map((image) => image.getAttribute('src'))).toEqual([
+			'/assets/paneer.jpg',
+			'https://images.example.com/ramen.jpg',
+			''
+		]);
 	});
 
 	it('links each dish card to /menu/<id>', () => {
@@ -94,18 +113,34 @@ describe('menu list page', () => {
 });
 
 describe('/menu load', () => {
-	it('selects the dish projections ordered by name', async () => {
-		dbMock.orderBy.mockResolvedValueOnce(dishes);
+	it('loads name-ordered dish data, including images, through the authenticated backend bridge', async () => {
+		backendMock.backendJson.mockResolvedValueOnce({ dishes });
 
 		const result = await runLoad();
 
 		expect(result).toEqual({ dishes });
-		expect(dbMock.select).toHaveBeenCalledTimes(1);
-		const projected = (dbMock.select.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
-		expect(Object.keys(projected).sort()).toEqual(['cuisine', 'description', 'id', 'image', 'name']);
-		expect(dbMock.from).toHaveBeenCalledTimes(1);
-		expect(dbMock.leftJoin).toHaveBeenCalledTimes(1);
-		expect(dbMock.orderBy).toHaveBeenCalledTimes(1);
-		expect(dbMock.orderBy.mock.calls[0][0]).toBeTruthy();
+		expect(backendMock.backendJson).toHaveBeenCalledWith(makeEvent(), '/api/dishes');
+		expect(result.dishes.map(({ name }) => name)).toEqual([
+			'Paneer Butter Masala',
+			'Miso Ramen',
+			'Tacos al Pastor'
+		]);
+		expect(result.dishes[0].image).toBe('/assets/paneer.jpg');
+		expect(result.dishes[2].image).toBeNull();
+	});
+
+	it('redirects anonymous requests to sign in before calling the backend', async () => {
+		const thrown = await catchLoad(false);
+
+		expect(thrown).toMatchObject({ status: 303, location: '/auth/login' });
+		expect(backendMock.backendJson).not.toHaveBeenCalled();
+	});
+
+	it('translates backend service errors through the bridge error handler', async () => {
+		const failure = { status: 502, message: 'DearDish services are temporarily unavailable.' };
+		backendMock.backendJson.mockRejectedValueOnce(failure);
+
+		await expect(runLoad()).rejects.toBe(failure);
+		expect(backendMock.throwBackendError).toHaveBeenCalledWith(failure);
 	});
 });

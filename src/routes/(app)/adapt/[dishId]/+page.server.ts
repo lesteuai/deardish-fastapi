@@ -1,19 +1,14 @@
-import { eq } from 'drizzle-orm';
-import { error } from '@sveltejs/kit';
-import { z } from 'zod';
-import { db } from '$lib/server/db';
-import { dishes } from '$lib/server/db/schema';
+import { redirect } from '@sveltejs/kit';
+import { backendJson, throwBackendError } from '$lib/server/backend';
+import type { DishDetail } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }) => {
-	if (!z.uuid().safeParse(params.dishId).success) {
-		error(400, 'Invalid dish id');
+export const load: PageServerLoad = async (event) => {
+	if (!event.locals.user) redirect(303, '/auth/login');
+	try {
+		const { dish } = await backendJson<{ dish: DishDetail }>(event, `/api/dishes/${event.params.dishId}`);
+		return { dish };
+	} catch (error) {
+		throwBackendError(error);
 	}
-
-	const [dish] = await db.select().from(dishes).where(eq(dishes.id, params.dishId)).limit(1);
-	if (!dish) {
-		error(404, 'Dish not found');
-	}
-
-	return { dish };
 };

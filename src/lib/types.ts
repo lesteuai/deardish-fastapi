@@ -24,14 +24,19 @@ export type DishSummary = {
 	name: string;
 	cuisine: string;
 	description: string;
-	imageLocation: string | null;
+	image: string | null;
+};
+
+export type DishDetail = DishSummary & {
+	content: string;
+	lastUpdated: string;
+	ingredients: string[];
+	imageId: string | null;
 };
 
 export type Meal = {
 	id: string;
-	userId: string;
 	title: string;
 	content: string;
-	sourceDishId: string | null;
 	createdAt: string;
 };
