@@ -20,12 +20,12 @@ DearDish has five screens you will use:
 - **My Meals**: recipes you have saved.
 - **Profile**: your health details.
 
-The top of every page has the DearDish name and links to move between these screens.
+The top of every page has the DearDish name. Once you are signed in, the navigation menu lets you move between these screens.
 
 ## 1. Create your account
 
 1. Open DearDish in your browser. You land on the welcome page.
-2. Click **Register**.
+2. Click **Sign in**, then **Create an account**.
 3. Type your email address.
 4. Type a password of at least 8 characters.
 5. Retype the same password in the **Confirm password** field.
@@ -39,7 +39,7 @@ Already have an account? Click **Sign in** instead.
 
 **To sign in:**
 
-1. Click **Sign in** in the top menu (or on the welcome page).
+1. Click **Sign in** on the welcome page.
 2. Enter your email and password.
 3. Click **Sign in**.
 
@@ -77,11 +77,14 @@ If you save without filling anything in, that is fine. DearDish will then use ge
 
 1. On a dish page, read the ingredients list.
 2. Click **Adapt this dish**.
-3. A message appears saying DearDish is adapting your dish. The recipe appears word by word as it is written. Wait for it to finish.
+3. On the Adapt page, click **Adapt this dish** to start generation.
+4. A message appears saying DearDish is adapting your dish. The recipe appears gradually as it is written. Wait for it to finish.
 
 Your adapted recipe includes a new title, an ingredient list that notes every substitution made for you, and numbered cooking steps. It honors your allergies, respects your dietary preferences, steers around ingredients that clash with your conditions, and folds in your notes.
 
 If the recipe cannot be prepared, a plain message appears and you can click **Adapt this dish** again to retry.
+
+If the stream is interrupted, part of the recipe may remain visible, but **Save as meal** stays disabled. Retry the adaptation and wait for it to finish before saving.
 
 You can adapt the same dish as many times as you like. Each adaptation is generated fresh for your current profile.
 
