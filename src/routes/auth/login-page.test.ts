@@ -24,14 +24,14 @@ describe('login page', () => {
 		expect(getByLabelText('Password')).toBeTruthy();
 	});
 
-	it('renders an empty form with a link to register when there are no errors', () => {
-		const { getByRole, queryByText } = render(LoginPage, { props: { form: undefined } as never });
+	it('renders the current empty form and account-creation button', () => {
+		const { getByRole, queryByText, queryByRole } = render(LoginPage, { props: { form: undefined } as never });
 
 		expect(getByRole('heading', { name: 'Sign in' })).toBeTruthy();
 		expect(getByRole('button', { name: 'Sign in' })).toBeTruthy();
 
-		const register = getByRole('link', { name: 'Create an account' });
-		expect(register.getAttribute('href')).toBe('/auth/register');
+		expect(getByRole('button', { name: 'Create an account' })).toBeTruthy();
+		expect(queryByRole('link', { name: 'Create an account' })).toBeNull();
 
 		expect(queryByText('Invalid email or password')).toBeNull();
 	});

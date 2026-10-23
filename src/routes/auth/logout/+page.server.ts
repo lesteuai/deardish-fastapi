@@ -1,12 +1,14 @@
 import { redirect } from '@sveltejs/kit';
-import { SESSION_COOKIE, clearSessionCookie, destroySession } from '$lib/server/auth';
+import { backendJson, throwBackendError } from '$lib/server/backend';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	default: async ({ cookies }) => {
-		const token = cookies.get(SESSION_COOKIE);
-		if (token) await destroySession(token);
-		clearSessionCookie(cookies);
+	default: async (event) => {
+		try {
+			await backendJson<void>(event, '/api/auth/logout', { method: 'POST' });
+		} catch (error) {
+			throwBackendError(error);
+		}
 		redirect(302, '/');
 	}
 };

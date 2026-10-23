@@ -1,7 +1,9 @@
+import type { AuthUser } from '$lib/types';
+
 declare global {
 	namespace App {
 		interface Locals {
-			user: { id: string; email: string } | null;
+			user: AuthUser | null;
 		}
 	}
 }

@@ -3,9 +3,8 @@ import { createTextStreamResponse, streamText } from 'ai';
 import {
 	buildAdaptSystemPrompt,
 	buildAdaptUserPrompt,
-	type Dish,
-	type HealthProfile
 } from './prompt';
+import type { Dish, HealthProfile } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
 const UNAVAILABLE_MESSAGE = 'The AI service is unavailable right now. Please try again shortly.';

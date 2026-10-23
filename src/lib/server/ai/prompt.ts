@@ -1,17 +1,6 @@
-export type Dish = {
-	name: string;
-	cuisine: string;
-	description: string;
-	ingredients: string[];
-	content: string;
-};
+import type { Dish, HealthProfile } from '$lib/types';
 
-export type HealthProfile = {
-	conditions: string;
-	allergies: string;
-	dietaryPreferences: string;
-	notes: string;
-};
+export type { Dish, HealthProfile } from '$lib/types';
 
 const SYSTEM_PROMPT = [
 	'You are DearDish, an assistant that adapts restaurant-style dishes for people with health needs.',

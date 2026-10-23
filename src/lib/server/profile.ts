@@ -2,13 +2,9 @@ import { eq } from 'drizzle-orm';
 import { db } from './db';
 import { healthProfiles } from './db/schema';
 import { profileSchema, zodFieldErrors } from '$lib/schemas';
+import type { HealthProfile } from '$lib/types';
 
-export type HealthProfile = {
-	conditions: string;
-	allergies: string;
-	dietaryPreferences: string;
-	notes: string;
-};
+export type { HealthProfile } from '$lib/types';
 
 export type SaveProfileResult =
 	| { ok: true; profile: HealthProfile }

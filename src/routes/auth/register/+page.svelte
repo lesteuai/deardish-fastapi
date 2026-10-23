@@ -28,11 +28,10 @@
 		<label for="password">Password</label>
 		<input
 			id="password"
-			name="password"
-			type="password"
-			autocomplete="new-password"
-			value={form?.values?.password ?? ''}
-		/>
+				name="password"
+				type="password"
+				autocomplete="new-password"
+			/>
 		{#if form?.errors?.password}
 			<p class="error">{form.errors.password}</p>
 		{/if}
@@ -40,11 +39,10 @@
 		<label for="confirmPassword">Confirm password</label>
 		<input
 			id="confirmPassword"
-			name="confirmPassword"
-			type="password"
-			autocomplete="new-password"
-			value={form?.values?.confirmPassword ?? ''}
-		/>
+				name="confirmPassword"
+				type="password"
+				autocomplete="new-password"
+			/>
 		{#if form?.errors?.confirmPassword}
 			<p class="error">{form.errors.confirmPassword}</p>
 		{/if}

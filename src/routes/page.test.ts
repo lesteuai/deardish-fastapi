@@ -26,13 +26,10 @@ describe('landing page', () => {
 		expect(logo.getAttribute('src')).toBe('/deardish.jpg');
 	});
 
-	it('links to the register and sign in pages', () => {
-		const { getByRole } = render(Page);
+	it('keeps the sign-in link and omits the removed register link', () => {
+		const { getByRole, queryByRole } = render(Page);
 
-		const register = getByRole('link', { name: 'Register' });
-		expect(register.getAttribute('href')).toBe('/auth/register');
-
-		const signIn = getByRole('link', { name: 'Sign in' });
-		expect(signIn.getAttribute('href')).toBe('/auth/login');
+		expect(queryByRole('link', { name: 'Register' })).toBeNull();
+		expect(getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/auth/login');
 	});
 });

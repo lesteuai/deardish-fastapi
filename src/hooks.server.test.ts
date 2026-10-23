@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const authMock = vi.hoisted(() => ({ validateSession: vi.fn() }));
+const backendMock = vi.hoisted(() => ({ getSessionUser: vi.fn() }));
 
-vi.mock('$lib/server/auth', () => ({ ...authMock, SESSION_COOKIE: 'deardish_session' }));
+vi.mock('$lib/server/backend', () => ({ ...backendMock, SESSION_COOKIE: 'deardish_session' }));
 
 import { handle } from './hooks.server';
 
@@ -27,7 +27,7 @@ async function runHandle(token: string | undefined) {
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	authMock.validateSession.mockResolvedValue(user);
+	backendMock.getSessionUser.mockResolvedValue(user);
 });
 
 describe('hooks.server handle', () => {
@@ -35,23 +35,32 @@ describe('hooks.server handle', () => {
 		const { locals, resolve } = await runHandle(undefined);
 
 		expect(locals.user).toBeNull();
-		expect(authMock.validateSession).not.toHaveBeenCalled();
+		expect(backendMock.getSessionUser).not.toHaveBeenCalled();
 		expect(resolve).toHaveBeenCalledTimes(1);
 	});
 
 	it('sets locals.user for a valid token', async () => {
 		const { locals } = await runHandle('session-token');
 
-		expect(authMock.validateSession).toHaveBeenCalledWith('session-token');
+		expect(backendMock.getSessionUser).toHaveBeenCalledWith(expect.objectContaining({ cookies: expect.any(Object) }));
 		expect(locals.user).toEqual(user);
 	});
 
 	it('sets locals.user null for an invalid token', async () => {
-		authMock.validateSession.mockResolvedValue(null);
+		backendMock.getSessionUser.mockResolvedValue(null);
 
 		const { locals } = await runHandle('bad-token');
 
-		expect(authMock.validateSession).toHaveBeenCalledWith('bad-token');
+		expect(backendMock.getSessionUser).toHaveBeenCalledTimes(1);
 		expect(locals.user).toBeNull();
+	});
+
+	it('continues anonymously when the backend cannot validate a cookie', async () => {
+		backendMock.getSessionUser.mockRejectedValue(new Error('backend unavailable'));
+
+		const { locals, resolve } = await runHandle('stale-token');
+
+		expect(locals.user).toBeNull();
+		expect(resolve).toHaveBeenCalledTimes(1);
 	});
 });

@@ -1,246 +1,137 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const authMock = vi.hoisted(() => ({
-	authenticate: vi.fn(),
-	registerUser: vi.fn(),
-	createSession: vi.fn(),
-	setSessionCookie: vi.fn(),
-	clearSessionCookie: vi.fn(),
-	destroySession: vi.fn()
+const backendMock = vi.hoisted(() => ({ backendJson: vi.fn() }));
+
+vi.mock('$lib/server/backend', async (importOriginal) => ({
+	...(await importOriginal<typeof import('$lib/server/backend')>()),
+	backendJson: backendMock.backendJson
 }));
 
-vi.mock('$lib/server/auth', () => ({
-	...authMock,
-	SESSION_COOKIE: 'deardish_session'
-}));
-
+import { BackendError } from '$lib/server/backend';
 import { actions as loginActions } from './login/+page.server';
 import { actions as registerActions } from './register/+page.server';
 import { actions as logoutActions } from './logout/+page.server';
 
-type CookieStub = {
-	get: ReturnType<typeof vi.fn>;
-	set: ReturnType<typeof vi.fn>;
-	delete: ReturnType<typeof vi.fn>;
-};
-
-function makeCookies(session?: string): CookieStub {
-	return {
-		get: vi.fn(() => session),
-		set: vi.fn(),
-		delete: vi.fn()
-	};
-}
-
-function makeRequest(fields: Record<string, string>) {
+function makeEvent(fields: Record<string, string> = {}, token?: string) {
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(fields)) formData.append(key, value);
-	return { formData: async () => formData };
+	const cookies = { get: vi.fn(() => token), set: vi.fn(), delete: vi.fn() };
+	return {
+		event: {
+			request: { formData: async () => formData },
+			cookies,
+			url: new URL('https://deardish.example/auth')
+		} as never,
+		cookies
+	};
 }
 
 type ActionFailure = { status: number; data: { errors: Record<string, string>; values: Record<string, string> } };
 
-beforeEach(() => {
-	vi.clearAllMocks();
-});
+async function captureRedirect(action: (input: never) => Promise<unknown>, event: never) {
+	try {
+		await action(event);
+	} catch (error) {
+		return error as { status?: number; location?: string };
+	}
+	throw new Error('Expected action to redirect');
+}
 
-describe('login action', () => {
-	it('rejects an empty email with a field error and no cookie', async () => {
-		const cookies = makeCookies();
+beforeEach(() => vi.clearAllMocks());
 
-		const result = await loginActions.default({
-			request: makeRequest({ email: '', password: 'secret' }),
-			cookies
-		} as never);
+describe('authentication actions through the backend bridge', () => {
+	it('returns backend login field errors without returning a password', async () => {
+		backendMock.backendJson.mockRejectedValue(new BackendError(400, 'Invalid request', {
+			email: 'Enter a valid email address', password: 'Required'
+		}));
+		const { event } = makeEvent({ email: 'typed@example.com', password: 'private-login-secret' });
 
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.email).toBeTruthy();
-		expect(cookies.set).not.toHaveBeenCalled();
-		expect(authMock.authenticate).not.toHaveBeenCalled();
+		const result = await loginActions.default(event) as ActionFailure;
+
+		expect(result.status).toBe(400);
+		expect(result.data.errors).toEqual({ email: 'Enter a valid email address', password: 'Required' });
+		expect(result.data.values).toEqual({ email: 'typed@example.com' });
+		expect(JSON.stringify(result)).not.toContain('private-login-secret');
+		expect(backendMock.backendJson).toHaveBeenCalledWith(event, '/api/auth/login', {
+			method: 'POST', body: { email: 'typed@example.com', password: 'private-login-secret' }
+		});
 	});
 
-	it('rejects an empty password with a field error and no cookie', async () => {
-		const cookies = makeCookies();
+	it('maps invalid credentials and backend failure to safe form errors', async () => {
+		const { event } = makeEvent({ email: 'chef@example.com', password: 'wrong-secret' });
+		backendMock.backendJson.mockRejectedValueOnce(new BackendError(401, 'Invalid email or password'));
+		const invalid = await loginActions.default(event) as ActionFailure;
+		expect(invalid.data.errors.form).toBe('Invalid email or password');
+		expect(JSON.stringify(invalid)).not.toContain('wrong-secret');
 
-		const result = await loginActions.default({
-			request: makeRequest({ email: 'chef@example.com', password: '' }),
-			cookies
-		} as never);
-
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.password).toBeTruthy();
-		expect(cookies.set).not.toHaveBeenCalled();
+		backendMock.backendJson.mockRejectedValueOnce(new TypeError('connection secret'));
+		const unavailable = await loginActions.default(event) as ActionFailure;
+		expect(unavailable.status).toBe(502);
+		expect(unavailable.data.errors.form).toContain('temporarily unavailable');
+		expect(JSON.stringify(unavailable)).not.toContain('connection secret');
 	});
 
-	it('rejects wrong or unknown credentials with a form error and no cookie', async () => {
-		authMock.authenticate.mockResolvedValue(null);
-		const cookies = makeCookies();
+	it('redirects after a successful backend login', async () => {
+		const { event } = makeEvent({ email: 'chef@example.com', password: 'login-secret' });
+		backendMock.backendJson.mockResolvedValue({ user: { id: 'user-1', email: 'chef@example.com' } });
 
-		const result = await loginActions.default({
-			request: makeRequest({ email: 'chef@example.com', password: 'wrong-password' }),
-			cookies
-		} as never);
+		const redirect = await captureRedirect(loginActions.default as never, event);
 
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.form).toBeTruthy();
-		expect(cookies.set).not.toHaveBeenCalled();
+		expect(redirect.status).toBe(302);
+		expect(redirect.location).toBe('/menu');
 	});
 
-	it('creates a session and redirects to /menu on success', async () => {
-		authMock.authenticate.mockResolvedValue({ id: 'user-1', email: 'chef@example.com' });
-		authMock.createSession.mockResolvedValue('session-token');
-		const cookies = makeCookies();
+	it('passes registration policy errors through without returning either password', async () => {
+		const { event } = makeEvent({
+			email: 'bad-email', password: 'registration-secret', confirmPassword: 'different-secret'
+		});
+		backendMock.backendJson.mockRejectedValueOnce(new BackendError(400, 'Invalid request', {
+			email: 'Enter a valid email address', confirmPassword: 'Passwords do not match'
+		}));
 
-		let thrown: { status?: number; location?: string } | undefined;
-		try {
-			await loginActions.default({
-				request: makeRequest({ email: 'chef@example.com', password: 'right-password' }),
-				cookies
-			} as never);
-		} catch (error) {
-			thrown = error as { status?: number; location?: string };
-		}
+		const invalid = await registerActions.default(event) as ActionFailure;
 
-		expect(thrown?.status).toBe(302);
-		expect(thrown?.location).toBe('/menu');
-		expect(authMock.createSession).toHaveBeenCalledWith('user-1');
-		expect(authMock.setSessionCookie).toHaveBeenCalledWith(cookies, 'session-token');
-		expect(thrown).toBeDefined();
-	});
-});
-
-describe('register action', () => {
-	it('rejects an invalid email with a field error and creates no user', async () => {
-		const cookies = makeCookies();
-
-		const result = await registerActions.default({
-			request: makeRequest({
-				email: 'not-an-email',
-				password: 'supersecret',
-				confirmPassword: 'supersecret'
-			}),
-			cookies
-		} as never);
-
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.email).toBeTruthy();
-		expect(authMock.registerUser).not.toHaveBeenCalled();
-		expect(cookies.set).not.toHaveBeenCalled();
+		expect(invalid.data.errors).toEqual({
+			email: 'Enter a valid email address', confirmPassword: 'Passwords do not match'
+		});
+		expect(invalid.data.values).toEqual({ email: 'bad-email' });
+		expect(JSON.stringify(invalid)).not.toContain('registration-secret');
+		expect(JSON.stringify(invalid)).not.toContain('different-secret');
 	});
 
-	it('rejects a short password with a field error', async () => {
-		const cookies = makeCookies();
+	it('maps duplicate email errors and returns a safe unavailable error', async () => {
+		const { event } = makeEvent({
+			email: 'duplicate@example.com', password: 'registration-secret', confirmPassword: 'registration-secret'
+		});
+		backendMock.backendJson.mockRejectedValueOnce(new BackendError(400, 'Invalid request', {
+			email: 'An account with this email already exists'
+		}));
+		const duplicate = await registerActions.default(event) as ActionFailure;
+		expect(duplicate.data.errors.email).toContain('already exists');
+		expect(JSON.stringify(duplicate)).not.toContain('registration-secret');
 
-		const result = await registerActions.default({
-			request: makeRequest({
-				email: 'chef@example.com',
-				password: 'short',
-				confirmPassword: 'short'
-			}),
-			cookies
-		} as never);
-
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.password).toBeTruthy();
-		expect(authMock.registerUser).not.toHaveBeenCalled();
+		backendMock.backendJson.mockRejectedValueOnce(new TypeError('database connection secret'));
+		const unavailable = await registerActions.default(event) as ActionFailure;
+		expect(unavailable.status).toBe(502);
+		expect(unavailable.data.errors.form).toContain('temporarily unavailable');
+		expect(JSON.stringify(unavailable)).not.toContain('database connection secret');
 	});
 
-	it('rejects a password mismatch without creating a user', async () => {
-		const cookies = makeCookies();
+	it('redirects after registration and logout backend operations', async () => {
+		const registerEvent = makeEvent({
+			email: 'chef@example.com', password: 'register-secret', confirmPassword: 'register-secret'
+		}).event;
+		backendMock.backendJson.mockResolvedValue({ user: { id: 'user-1', email: 'chef@example.com' } });
+		const registerRedirect = await captureRedirect(registerActions.default as never, registerEvent);
+		expect(registerRedirect.status).toBe(302);
+		expect(registerRedirect.location).toBe('/menu');
 
-		const result = await registerActions.default({
-			request: makeRequest({
-				email: 'chef@example.com',
-				password: 'supersecret',
-				confirmPassword: 'different-secret'
-			}),
-			cookies
-		} as never);
-
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.confirmPassword).toBeTruthy();
-		expect(authMock.registerUser).not.toHaveBeenCalled();
-		expect(cookies.set).not.toHaveBeenCalled();
-	});
-
-	it('reports a duplicate email as a field error and sets no cookie', async () => {
-		authMock.registerUser.mockResolvedValue({ conflict: true });
-		const cookies = makeCookies();
-
-		const result = await registerActions.default({
-			request: makeRequest({
-				email: 'chef@example.com',
-				password: 'supersecret',
-				confirmPassword: 'supersecret'
-			}),
-			cookies
-		} as never);
-
-		const failure = result as ActionFailure;
-		expect(failure.status).toBe(400);
-		expect(failure.data.errors.email).toBeTruthy();
-		expect(cookies.set).not.toHaveBeenCalled();
-	});
-
-	it('creates a session and redirects to /menu on success', async () => {
-		authMock.registerUser.mockResolvedValue({ user: { id: 'user-1', email: 'chef@example.com' } });
-		authMock.createSession.mockResolvedValue('session-token');
-		const cookies = makeCookies();
-
-		let thrown: { status?: number; location?: string } | undefined;
-		try {
-			await registerActions.default({
-				request: makeRequest({
-					email: 'Chef@Example.com',
-					password: 'supersecret',
-					confirmPassword: 'supersecret'
-				}),
-				cookies
-			} as never);
-		} catch (error) {
-			thrown = error as { status?: number; location?: string };
-		}
-
-		expect(thrown?.location).toBe('/menu');
-		expect(authMock.registerUser).toHaveBeenCalledWith('chef@example.com', 'supersecret');
-		expect(authMock.setSessionCookie).toHaveBeenCalledWith(cookies, 'session-token');
-		expect(thrown).toBeDefined();
-	});
-});
-
-describe('logout action', () => {
-	it('destroys the session, clears the cookie, and redirects to the root page', async () => {
-		const cookies = makeCookies('session-token');
-
-		let thrown: { status?: number; location?: string } | undefined;
-		try {
-			await logoutActions.default({ cookies } as never);
-		} catch (error) {
-			thrown = error as { status?: number; location?: string };
-		}
-
-		expect(thrown?.location).toBe('/');
-		expect(authMock.destroySession).toHaveBeenCalledWith('session-token');
-		expect(authMock.clearSessionCookie).toHaveBeenCalledWith(cookies);
-		expect(thrown).toBeDefined();
-	});
-
-	it('does not destroy a session when no cookie is present', async () => {
-		const cookies = makeCookies(undefined);
-
-		try {
-			await logoutActions.default({ cookies } as never);
-		} catch {
-			// redirect is expected
-		}
-
-		expect(authMock.destroySession).not.toHaveBeenCalled();
-		expect(authMock.clearSessionCookie).toHaveBeenCalledWith(cookies);
+		const logout = makeEvent({}, 'session-token');
+		const logoutEvent = logout.event as never;
+		backendMock.backendJson.mockResolvedValueOnce(undefined);
+		const logoutRedirect = await captureRedirect(logoutActions.default as never, logoutEvent);
+		expect(backendMock.backendJson).toHaveBeenLastCalledWith(logoutEvent, '/api/auth/logout', { method: 'POST' });
+		expect(logoutRedirect.status).toBe(302);
+		expect(logoutRedirect.location).toBe('/');
 	});
 });
