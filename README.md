@@ -97,7 +97,7 @@ Backend tests require PostgreSQL server binaries and frontend dependencies. With
 DEARDISH_TEST_POSTGRES_BIN="$(pg_config --bindir)" bun run backend:test
 ```
 
-The fixture starts a temporary cluster and fresh test databases, clearing inherited PG/AI settings rather than using the configured database. See [Workflows](docs/agent-docs/workflows.md) for prerequisites and recorded verification.
+The fixture starts a temporary cluster and fresh test databases, clearing inherited PG/AI settings rather than using the configured database.
 
 ## Deployment
 
@@ -105,8 +105,4 @@ Root `vercel.json` declares a frontend service rooted at `./` and a backend serv
 
 ## Docs
 
-- User guide for non-technical users: `USER-GUIDE.md`
-- Current documentation and migration source of truth: [Documentation Index](docs/agent-docs/README.md).
-- Current migration: `docs/agent-docs/specs/261023-fastapi-langchain-embar/` (SPEC revision 1, verified; PLAN revision 4; TASKS complete).
-- Historical verified demo spec and build report: `docs/agent-docs/specs/261015-deardish-demo/`. Its original stack and commands describe that historical implementation.
-- Dev guide for agents: `AGENTS.md`
+- User guide for non-technical users: [USER-GUIDE.md](USER-GUIDE.md)
